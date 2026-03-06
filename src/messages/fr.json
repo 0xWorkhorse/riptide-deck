@@ -1,18 +1,22 @@
 {
   "app": {
     "title": "Riptide Deck",
-    "subtitle": "Data Comparison & Exception Reporting"
+    "subtitle": "Music Publishing Operations"
   },
   "nav": {
     "dashboard": "Dashboard",
+    "songs": "Song Registry",
+    "documents": "Documents",
     "newComparison": "New Comparison",
     "datasets": "Datasets",
     "connections": "Connections",
-    "history": "History"
+    "history": "History",
+    "songRegistration": "Song Registration",
+    "dataTools": "Data Tools"
   },
   "dashboard": {
     "welcome": "Welcome to Riptide Deck",
-    "description": "Compare datasets, surface exceptions, and resolve discrepancies across your music-rights catalog.",
+    "description": "Register songs, import catalogs, compare datasets, and resolve discrepancies across your music-rights catalog.",
     "quickActions": "Quick Actions",
     "recentComparisons": "Recent Comparisons",
     "noRecent": "No comparisons yet. Start one to see results here.",
@@ -20,7 +24,129 @@
       "totalComparisons": "Total Comparisons",
       "openExceptions": "Open Exceptions",
       "datasetsLoaded": "Datasets Loaded",
-      "connectionsActive": "Active Connections"
+      "connectionsActive": "Active Connections",
+      "songsRegistered": "Songs Registered",
+      "documentsImported": "Documents Imported"
+    },
+    "actions": {
+      "storyToSplits": "Tell the story of a song to register it in seconds",
+      "documentToSplits": "Import BMI, Curve, or PDF documents for cross-PRO auditing"
+    }
+  },
+  "songs": {
+    "title": "Song Registry",
+    "subtitle": "All registered songs from stories and documents",
+    "newTitle": "Story to Splits",
+    "newSubtitle": "Tell the story of your song and we'll register it in seconds",
+    "newSong": "New Song",
+    "empty": "No songs registered yet. Start by telling a story or importing a document.",
+    "search": "Search songs…",
+    "view": "View Details",
+    "sourceStory": "Story",
+    "sourceDocument": "Document",
+    "chat": {
+      "title": "Song Story",
+      "subtitle": "Tell us about your song — we'll extract the details",
+      "prompt": "Tell the story of your song",
+      "promptHint": "Describe who wrote it, how it was created, and any other details. You can type or use the microphone.",
+      "inputPlaceholder": "Tell us about the song…",
+      "startRecording": "Start voice recording",
+      "stopRecording": "Stop recording",
+      "noSpeech": "Voice recording is not supported in this browser. Please type your story instead.",
+      "foundInfo": "Here's what I found:",
+      "questionsNeeded": "I still need a few details:",
+      "couldNotParse": "I couldn't extract enough information from that. Could you provide more details about the song title, artist, and contributors?",
+      "error": "Something went wrong while parsing. Please try again."
+    },
+    "form": {
+      "songInfo": "Song Information",
+      "title": "Song Title",
+      "titlePlaceholder": "e.g. The Healing Kind",
+      "artist": "Artist / Band",
+      "artistPlaceholder": "e.g. Side Talker",
+      "album": "Album",
+      "albumPlaceholder": "e.g. Alchemy",
+      "recordLabel": "Record Label",
+      "recordLabelPlaceholder": "e.g. Metallic Champagne Records",
+      "instrumental": "Instrumental",
+      "instrumentalHint": "No lyrics — musical shares will be redistributed among songwriters",
+      "contributors": "Contributors & Splits",
+      "addContributor": "Add Person",
+      "noContributors": "No contributors added yet",
+      "name": "Name",
+      "role": "Role",
+      "split": "Split",
+      "splitType": "Type",
+      "music": "Music",
+      "lyrics": "Lyrics",
+      "distributeSplits": "Even Split",
+      "splitsWarning": "Splits total {total}% — must equal 100%",
+      "register": "Register Song",
+      "registered": "Song Registered!",
+      "redirecting": "Redirecting to song registry…"
+    },
+    "roles": {
+      "songwriter": "Songwriter",
+      "composer": "Composer",
+      "lyricist": "Lyricist",
+      "producer": "Producer",
+      "arranger": "Arranger",
+      "instrumentalist": "Instrumentalist",
+      "vocalist": "Vocalist",
+      "session_musician": "Session Musician",
+      "engineer": "Engineer",
+      "contributor": "Contributor"
+    },
+    "detail": {
+      "title": "Song Details",
+      "notFound": "Song not found",
+      "identifiers": "Identifiers",
+      "hasLyrics": "Has Lyrics"
+    }
+  },
+  "documents": {
+    "title": "Document Import",
+    "subtitle": "Upload catalog statements for cross-PRO auditing",
+    "empty": "No documents imported yet. Upload a BMI CSV, Curve Excel, or PDF document above.",
+    "search": "Search documents…",
+    "song": "song",
+    "songs": "songs",
+    "searchSongs": "Search songs in this document…",
+    "noSongs": "No songs found in this document.",
+    "noSongsFound": "No songs match your search.",
+    "notFound": "Document not found",
+    "backToDocuments": "Back to Documents",
+    "lookupAll": "Lookup All Songs",
+    "upload": {
+      "title": "Import Document",
+      "description": "Upload a catalog statement or split sheet from BMI, Curve, or a generic PDF/Word document.",
+      "selectType": "Please select a document type first",
+      "selectTypeFirst": "Select a document type above to enable upload",
+      "dropzone": "Drag & drop your file here, or click to browse",
+      "accepted": "Accepted formats"
+    },
+    "status": {
+      "match": "Match",
+      "missing": "Missing",
+      "conflict": "Conflict",
+      "pending": "Pending"
+    },
+    "songDetail": {
+      "identifiers": "Identifiers",
+      "edit": "Edit",
+      "cancelEdit": "Cancel",
+      "save": "Save",
+      "writers": "writers",
+      "publishers": "publishers",
+      "writersTitle": "Writers & Composers",
+      "publishersTitle": "Publishers",
+      "noWriters": "No writers found in this record",
+      "crossReference": "Cross-Reference",
+      "lookupAll": "Lookup All",
+      "additionalPublishers": "Additional publishers found:",
+      "missingItems": "missing items",
+      "conflictItems": "conflicts",
+      "confidence": "Confidence"
     }
   },
   "upload": {

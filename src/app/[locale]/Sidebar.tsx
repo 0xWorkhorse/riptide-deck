@@ -10,15 +10,38 @@ import {
   Plug,
   History,
   Waves,
+  Music,
+  FileText,
   LucideIcon,
 } from 'lucide-react';
 
-const navItems: Array<{ key: string; href: string; icon: LucideIcon }> = [
-  { key: 'dashboard', href: '/', icon: LayoutDashboard },
-  { key: 'newComparison', href: '/comparison/new', icon: GitCompareArrows },
-  { key: 'datasets', href: '/datasets', icon: Database },
-  { key: 'connections', href: '/connections', icon: Plug },
-  { key: 'history', href: '/history', icon: History },
+interface NavSection {
+  label?: string;
+  items: Array<{ key: string; href: string; icon: LucideIcon }>;
+}
+
+const navSections: NavSection[] = [
+  {
+    items: [
+      { key: 'dashboard', href: '/', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'songRegistration',
+    items: [
+      { key: 'songs', href: '/songs', icon: Music },
+      { key: 'documents', href: '/documents', icon: FileText },
+    ],
+  },
+  {
+    label: 'dataTools',
+    items: [
+      { key: 'newComparison', href: '/comparison/new', icon: GitCompareArrows },
+      { key: 'datasets', href: '/datasets', icon: Database },
+      { key: 'connections', href: '/connections', icon: Plug },
+      { key: 'history', href: '/history', icon: History },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -52,26 +75,37 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="space-y-1">
-          {navItems.map(({ key, href, icon: Icon }) => {
-            const active = isActive(href);
-            return (
-              <li key={key}>
-                <Link
-                  href={href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                    active
-                      ? 'bg-brand-500/10 text-brand-400'
-                      : 'text-text-secondary hover:bg-surface-2 hover:text-text-primary'
-                  }`}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {t(key)}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="space-y-4">
+          {navSections.map((section, si) => (
+            <div key={si}>
+              {section.label && (
+                <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                  {t(section.label)}
+                </p>
+              )}
+              <ul className="space-y-1">
+                {section.items.map(({ key, href, icon: Icon }) => {
+                  const active = isActive(href);
+                  return (
+                    <li key={key}>
+                      <Link
+                        href={href}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                          active
+                            ? 'bg-brand-500/10 text-brand-400'
+                            : 'text-text-secondary hover:bg-surface-2 hover:text-text-primary'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {t(key)}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </nav>
 
       {/* Footer */}

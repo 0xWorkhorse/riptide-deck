@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import {
@@ -8,10 +11,13 @@ import {
   AlertTriangle,
   Database,
   Zap,
+  Music,
+  FileText,
   LucideIcon,
+  Loader2,
 } from 'lucide-react';
 
-function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: string; color: string }) {
+function StatCard({ icon: Icon, label, value, color, loading }: { icon: LucideIcon; label: string; value: string; color: string; loading?: boolean }) {
   return (
     <div className="card flex items-center gap-4 p-5">
       <div
@@ -21,7 +27,11 @@ function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon; label
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-2xl font-semibold text-text-primary">{value}</p>
+        {loading ? (
+          <Loader2 className="h-5 w-5 animate-spin text-text-muted" />
+        ) : (
+          <p className="text-2xl font-semibold text-text-primary">{value}</p>
+        )}
         <p className="text-xs text-text-muted">{label}</p>
       </div>
     </div>
@@ -42,40 +52,86 @@ function QuickAction({ icon: Icon, label, description, href }: { icon: LucideIco
   );
 }
 
+interface DashboardStats {
+  comparisons: number;
+  exceptions: number;
+  datasets: number;
+  connections: number;
+  songs: number;
+  documents: number;
+}
+
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const tNav = useTranslations('nav');
   const tUpload = useTranslations('upload');
   const tConn = useTranslations('connections');
+  const tSongs = useTranslations('songs');
+  const tDocs = useTranslations('documents');
 
-  const stats = [
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const statCards = [
+    {
+      icon: Music,
+      label: t('stats.songsRegistered'),
+      value: String(stats?.songs ?? 0),
+      color: 'oklch(0.72 0.18 155)',
+    },
+    {
+      icon: FileText,
+      label: t('stats.documentsImported'),
+      value: String(stats?.documents ?? 0),
+      color: 'oklch(0.65 0.16 230)',
+    },
     {
       icon: BarChart3,
       label: t('stats.totalComparisons'),
-      value: '0',
+      value: String(stats?.comparisons ?? 0),
       color: 'oklch(0.55 0.18 230)',
     },
     {
       icon: AlertTriangle,
       label: t('stats.openExceptions'),
-      value: '0',
+      value: String(stats?.exceptions ?? 0),
       color: 'oklch(0.78 0.16 80)',
     },
     {
       icon: Database,
       label: t('stats.datasetsLoaded'),
-      value: '0',
+      value: String(stats?.datasets ?? 0),
       color: 'oklch(0.72 0.18 155)',
     },
     {
       icon: Zap,
       label: t('stats.connectionsActive'),
-      value: '0',
+      value: String(stats?.connections ?? 0),
       color: 'oklch(0.72 0.16 200)',
     },
   ];
 
   const quickActions = [
+    {
+      icon: Music,
+      label: tSongs('newSong'),
+      description: t('actions.storyToSplits'),
+      href: '/songs/new',
+    },
+    {
+      icon: FileText,
+      label: tDocs('upload.title'),
+      description: t('actions.documentToSplits'),
+      href: '/documents',
+    },
     {
       icon: GitCompareArrows,
       label: tNav('newComparison'),
@@ -105,9 +161,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {statCards.map((stat) => (
+          <StatCard key={stat.label} {...stat} loading={loading} />
         ))}
       </div>
 
@@ -116,7 +172,7 @@ export default function DashboardPage() {
         <h2 className="mb-4 text-lg font-semibold text-text-primary">
           {t('quickActions')}
         </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {quickActions.map((action) => (
             <QuickAction key={action.href} {...action} />
           ))}
