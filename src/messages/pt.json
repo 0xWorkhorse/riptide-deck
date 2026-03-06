@@ -310,8 +310,8 @@
       "includeNotes": "Incluir as notas que você adicionou",
       "sideBySide": "Mostrar valores de origem e destino lado a lado"
     },
-    "generate": "Criar Exportação",
-    "generating": "Gerando seu arquivo…",
+    "generate": "Gerar Exportação",
+    "generating": "Preparando seu arquivo…",
     "download": "Baixar",
     "downloadReady": "Seu arquivo está pronto pra baixar."
   },
@@ -322,8 +322,8 @@
     "edit": "Editar Conexão",
     "form": {
       "name": "Nome da Conexão",
-      "namePlaceholder": "ex. BD de Royalties Produção",
-      "databaseType": "Tipo de Banco de Dados",
+      "namePlaceholder": "ex.: Banco de Royalties Produção",
+      "databaseType": "Tipo de Banco",
       "types": {
         "postgresql": "PostgreSQL",
         "mysql": "MySQL",
@@ -331,7 +331,7 @@
       },
       "host": "Endereço do Servidor",
       "hostPlaceholder": "ex. db.exemplo.com",
-      "port": "Porta",
+      "port": "Número da Porta",
       "portPlaceholder": "ex. 5432",
       "databaseName": "Nome do Banco",
       "databaseNamePlaceholder": "ex. royalties_prod",
@@ -345,7 +345,7 @@
     },
     "testConnection": "Testar Conexão",
     "testing": "Testando…",
-    "testSuccess": "Conectou com sucesso!",
+    "testSuccess": "Conectado com sucesso!",
     "testFailed": "Não foi possível conectar — confira as configurações e tente de novo",
     "queryBuilder": {
       "title": "Executar uma Consulta",
