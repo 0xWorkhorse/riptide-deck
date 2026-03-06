@@ -13,6 +13,10 @@ venv/
 dist/
 build/
 out/
+.next/
+
+# App data
+.data/
 
 # IDE / Editor
 .idea/

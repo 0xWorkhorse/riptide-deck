@@ -1,0 +1,260 @@
+{
+  "app": {
+    "title": "Riptide Deck",
+    "subtitle": "Data Comparison & Exception Reporting"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "newComparison": "New Comparison",
+    "datasets": "Datasets",
+    "connections": "Connections",
+    "history": "History"
+  },
+  "dashboard": {
+    "welcome": "Welcome to Riptide Deck",
+    "description": "Compare datasets, surface exceptions, and resolve discrepancies across your music-rights catalog.",
+    "quickActions": "Quick Actions",
+    "recentComparisons": "Recent Comparisons",
+    "noRecent": "No comparisons yet. Start one to see results here.",
+    "stats": {
+      "totalComparisons": "Total Comparisons",
+      "openExceptions": "Open Exceptions",
+      "datasetsLoaded": "Datasets Loaded",
+      "connectionsActive": "Active Connections"
+    }
+  },
+  "upload": {
+    "title": "Upload Dataset",
+    "dropzone": "Drag & drop files here, or click to browse",
+    "dropzoneActive": "Drop files to upload",
+    "browse": "Browse Files",
+    "supportedFormats": "Supported formats: CSV, TSV, XLSX, XLS, JSON",
+    "maxSize": "Maximum file size: 200 MB",
+    "processing": "Processing file…",
+    "parsing": "Parsing rows…",
+    "validating": "Validating schema…",
+    "complete": "Upload complete",
+    "failed": "Upload failed",
+    "rowCount": "{count, plural, one {# row} other {# rows}} detected",
+    "columnCount": "{count, plural, one {# column} other {# columns}} detected",
+    "datasetName": "Dataset Name",
+    "datasetNamePlaceholder": "e.g. Q4 2025 Royalty Statement",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "Add notes about this dataset…"
+  },
+  "datasets": {
+    "title": "Datasets",
+    "empty": "No datasets uploaded yet.",
+    "search": "Search datasets…",
+    "columns": {
+      "name": "Name",
+      "rows": "Rows",
+      "columns": "Columns",
+      "format": "Format",
+      "uploadedAt": "Uploaded",
+      "size": "Size"
+    },
+    "actions": {
+      "preview": "Preview",
+      "rename": "Rename",
+      "delete": "Delete",
+      "useInComparison": "Use in Comparison"
+    }
+  },
+  "comparison": {
+    "title": "New Comparison",
+    "steps": {
+      "selectDatasets": "Select Datasets",
+      "mapColumns": "Map Columns",
+      "selectKeys": "Select Keys",
+      "configure": "Configure",
+      "review": "Review & Run"
+    },
+    "selectDatasets": {
+      "title": "Choose two datasets to compare",
+      "sourceLabel": "Source Dataset (left)",
+      "targetLabel": "Target Dataset (right)",
+      "sourcePlaceholder": "Select source dataset…",
+      "targetPlaceholder": "Select target dataset…",
+      "orUpload": "or upload a new file"
+    },
+    "mapColumns": {
+      "title": "Map Columns Between Datasets",
+      "description": "Match columns from the source to columns in the target. Unmatched columns will be ignored.",
+      "sourceColumn": "Source Column",
+      "targetColumn": "Target Column",
+      "autoMap": "Auto-Map",
+      "clearAll": "Clear All",
+      "unmapped": "Unmapped",
+      "mapped": "{count, plural, one {# column} other {# columns}} mapped"
+    },
+    "selectKeys": {
+      "title": "Select Key Columns",
+      "description": "Choose one or more columns that uniquely identify each row. These are used to match records across datasets.",
+      "keyColumn": "Key Column",
+      "addKey": "Add Key Column",
+      "compositeKeyNote": "Composite keys match on the combination of all selected columns."
+    },
+    "configure": {
+      "title": "Comparison Settings",
+      "toleranceLabel": "Numeric Tolerance",
+      "tolerancePlaceholder": "e.g. 0.01",
+      "toleranceHelp": "Differences within this threshold are treated as matches.",
+      "caseSensitive": "Case-Sensitive Text Comparison",
+      "ignoreWhitespace": "Ignore Leading/Trailing Whitespace",
+      "comparisonName": "Comparison Name",
+      "comparisonNamePlaceholder": "e.g. Q4 Royalty vs. Internal Ledger"
+    },
+    "review": {
+      "title": "Review & Run",
+      "source": "Source",
+      "target": "Target",
+      "mappedColumns": "Mapped Columns",
+      "keyColumns": "Key Columns",
+      "settings": "Settings",
+      "run": "Run Comparison"
+    },
+    "running": "Running comparison…",
+    "complete": "Comparison complete"
+  },
+  "exceptions": {
+    "title": "Exception Report",
+    "summary": "Summary",
+    "details": "Details",
+    "status": {
+      "matched": "Matched",
+      "added": "Added",
+      "removed": "Removed",
+      "modified": "Modified"
+    },
+    "statusDescription": {
+      "matched": "Records present in both datasets with identical values",
+      "added": "Records found only in the target dataset",
+      "removed": "Records found only in the source dataset",
+      "modified": "Records present in both datasets with differing values"
+    },
+    "actions": {
+      "accept": "Accept",
+      "reject": "Reject",
+      "edit": "Edit",
+      "bulkAccept": "Bulk Accept",
+      "bulkReject": "Bulk Reject",
+      "resetStatus": "Reset Status",
+      "addNote": "Add Note"
+    },
+    "filters": {
+      "title": "Filters",
+      "allStatuses": "All Statuses",
+      "onlyMatched": "Matched Only",
+      "onlyAdded": "Added Only",
+      "onlyRemoved": "Removed Only",
+      "onlyModified": "Modified Only",
+      "resolved": "Resolved",
+      "unresolved": "Unresolved",
+      "search": "Search exceptions…",
+      "column": "Column",
+      "anyColumn": "Any Column"
+    },
+    "counts": {
+      "total": "{count, plural, one {# exception} other {# exceptions}}",
+      "resolved": "{count} resolved",
+      "remaining": "{count} remaining"
+    },
+    "noExceptions": "No exceptions found. Datasets are identical.",
+    "fieldDiff": {
+      "sourceValue": "Source Value",
+      "targetValue": "Target Value",
+      "difference": "Difference"
+    }
+  },
+  "export": {
+    "title": "Export Report",
+    "format": "Export Format",
+    "formats": {
+      "csv": "CSV",
+      "xlsx": "Excel (XLSX)",
+      "json": "JSON",
+      "pdf": "PDF Report"
+    },
+    "enrichment": {
+      "title": "Enrichment Options",
+      "includeMatched": "Include matched records",
+      "includeMetadata": "Include comparison metadata",
+      "includeSummary": "Include summary statistics",
+      "includeNotes": "Include reviewer notes",
+      "sideBySide": "Side-by-side source/target values"
+    },
+    "generate": "Generate Export",
+    "generating": "Generating…",
+    "download": "Download",
+    "downloadReady": "Your export is ready."
+  },
+  "connections": {
+    "title": "Database Connections",
+    "empty": "No connections configured.",
+    "new": "New Connection",
+    "edit": "Edit Connection",
+    "form": {
+      "name": "Connection Name",
+      "namePlaceholder": "e.g. Production Royalty DB",
+      "databaseType": "Database Type",
+      "types": {
+        "postgresql": "PostgreSQL",
+        "mysql": "MySQL",
+        "sqlite": "SQLite"
+      },
+      "host": "Host",
+      "hostPlaceholder": "e.g. db.example.com",
+      "port": "Port",
+      "portPlaceholder": "e.g. 5432",
+      "databaseName": "Database Name",
+      "databaseNamePlaceholder": "e.g. royalties_prod",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "sslEnabled": "Enable SSL",
+      "filePath": "File Path",
+      "filePathPlaceholder": "Path to SQLite file"
+    },
+    "testConnection": "Test Connection",
+    "testing": "Testing…",
+    "testSuccess": "Connection successful",
+    "testFailed": "Connection failed",
+    "queryBuilder": {
+      "title": "Query Builder",
+      "query": "SQL Query",
+      "queryPlaceholder": "SELECT * FROM …",
+      "run": "Run Query",
+      "preview": "Preview Results",
+      "importAsDataset": "Import as Dataset"
+    },
+    "status": {
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "error": "Error"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "success": "Success",
+    "retry": "Retry",
+    "search": "Search…",
+    "noResults": "No results found",
+    "selected": "{count, plural, one {# selected} other {# selected}}",
+    "requiredField": "This field is required",
+    "viewAll": "View All",
+    "actions": "Actions",
+    "createdAt": "Created",
+    "updatedAt": "Updated"
+  }
+}
