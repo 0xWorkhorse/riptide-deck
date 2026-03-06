@@ -25,7 +25,7 @@ export default function HistoryPage() {
   const t = useTranslations('exceptions');
   const tCommon = useTranslations('common');
   const tNav = useTranslations('nav');
-  const tHistory = useTranslations('history');
+
 
   const [comparisons, setComparisons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -131,7 +131,7 @@ export default function HistoryPage() {
           </p>
           {!searchQuery && (
             <Link
-              href="/compare"
+              href="/comparison/new"
               className="btn-primary mt-4 inline-flex items-center gap-2"
             >
               <GitCompareArrows className="h-4 w-4" />
@@ -146,7 +146,7 @@ export default function HistoryPage() {
             return (
               <Link
                 key={comp.id}
-                href={`/compare/${comp.id}`}
+                href={`/comparison/${comp.id}`}
                 className="card card-hover flex items-center gap-4 p-5 transition-all"
               >
                 {/* Icon */}
