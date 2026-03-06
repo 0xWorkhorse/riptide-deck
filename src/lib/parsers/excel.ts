@@ -1,20 +1,24 @@
 import ExcelJS from 'exceljs';
 
-/**
- * Parse Excel file (.xlsx, .xls) into a structured dataset.
- * @param {Buffer} buffer - Raw file buffer
- * @param {object} options
- * @param {string|number} [options.sheet] - Sheet name or index (0-based). Defaults to first sheet.
- * @param {boolean} [options.header=true] - First row is header
- * @returns {Promise<{ columns: string[], rows: object[], rowCount: number, sheets: string[] }>}
- */
-export async function parseExcel(buffer, options = {}) {
+export interface ExcelOptions {
+  sheet?: string | number;
+  header?: boolean;
+}
+
+export interface ExcelResult {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+  sheets: string[];
+}
+
+export async function parseExcel(buffer: Buffer, options: ExcelOptions = {}): Promise<ExcelResult> {
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(buffer);
+  await workbook.xlsx.load(buffer as unknown as ArrayBuffer);
 
   const sheets = workbook.worksheets.map((ws) => ws.name);
 
-  let worksheet;
+  let worksheet: ExcelJS.Worksheet | undefined;
   if (typeof options.sheet === 'number') {
     worksheet = workbook.worksheets[options.sheet];
   } else if (typeof options.sheet === 'string') {
@@ -27,9 +31,9 @@ export async function parseExcel(buffer, options = {}) {
     throw new Error(`Sheet not found: ${options.sheet}`);
   }
 
-  const rawRows = [];
+  const rawRows: Array<{ rowNumber: number; values: unknown[] }> = [];
   worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-    const values = [];
+    const values: unknown[] = [];
     row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
       values[colNumber - 1] = extractCellValue(cell);
     });
@@ -47,7 +51,7 @@ export async function parseExcel(buffer, options = {}) {
 
   const dataRows = hasHeader ? rawRows.slice(1) : rawRows;
   const rows = dataRows.map((raw, idx) => {
-    const row = { __rowIndex: idx };
+    const row: Record<string, unknown> = { __rowIndex: idx };
     columns.forEach((col, i) => {
       row[col] = raw.values[i] ?? null;
     });
@@ -57,11 +61,11 @@ export async function parseExcel(buffer, options = {}) {
   return { columns, rows, rowCount: rows.length, sheets };
 }
 
-function extractCellValue(cell) {
+function extractCellValue(cell: ExcelJS.Cell): unknown {
   if (cell.value === null || cell.value === undefined) return null;
   if (typeof cell.value === 'object') {
-    if (cell.value.result !== undefined) return cell.value.result;
-    if (cell.value.text) return cell.value.text;
+    if ((cell.value as { result?: unknown }).result !== undefined) return (cell.value as { result: unknown }).result;
+    if ((cell.value as { text?: string }).text) return (cell.value as { text: string }).text;
     if (cell.value instanceof Date) return cell.value.toISOString();
     return JSON.stringify(cell.value);
   }

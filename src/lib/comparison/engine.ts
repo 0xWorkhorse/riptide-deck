@@ -1,35 +1,61 @@
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * @typedef {'matched' | 'modified' | 'added' | 'removed'} ExceptionStatus
- *
- * @typedef {object} ComparisonConfig
- * @property {string[]} keyColumns - Columns used to match rows between datasets
- * @property {string[]} compareColumns - Columns to compare for differences (empty = all shared columns)
- * @property {Object<string, string>} columnMapping - Map source B columns to source A columns
- * @property {boolean} [caseSensitive=false] - Case-sensitive comparison
- * @property {number} [numericTolerance=0] - Tolerance for numeric comparisons
- * @property {boolean} [trimWhitespace=true] - Trim whitespace before comparing
- */
+export type ExceptionStatus = 'matched' | 'modified' | 'added' | 'removed';
 
-/**
- * @typedef {object} ComparisonResult
- * @property {string} id - Comparison ID
- * @property {object} summary - { matched, modified, added, removed, total }
- * @property {object[]} exceptions - Array of exception records
- * @property {string[]} comparedColumns - Columns that were compared
- * @property {string} createdAt
- */
+export interface ComparisonConfig {
+  keyColumns: string[];
+  compareColumns?: string[];
+  columnMapping?: Record<string, string>;
+  caseSensitive?: boolean;
+  numericTolerance?: number;
+  trimWhitespace?: boolean;
+}
 
-/**
- * Compare two datasets and produce exceptions.
- *
- * @param {object} sourceA - "Reference" dataset { columns, rows }
- * @param {object} sourceB - "Incoming" dataset { columns, rows }
- * @param {ComparisonConfig} config
- * @returns {ComparisonResult}
- */
-export function compareDatasets(sourceA, sourceB, config) {
+export interface DatasetSource {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  sourceName?: string;
+}
+
+interface NormalizeOpts {
+  caseSensitive: boolean;
+  trimWhitespace: boolean;
+}
+
+interface CompareOpts extends NormalizeOpts {
+  numericTolerance: number;
+}
+
+export interface ExceptionRecord {
+  id: string;
+  status: ExceptionStatus;
+  key: string;
+  keyValues: Record<string, unknown>;
+  sourceA: Record<string, unknown> | null;
+  sourceB: Record<string, unknown> | null;
+  differences: Array<{ column: string; valueA: unknown; valueB: unknown }>;
+  resolution: string | null;
+  enrichedValues: Record<string, unknown>;
+}
+
+export interface ComparisonResult {
+  id: string;
+  summary: {
+    matched: number;
+    modified: number;
+    added: number;
+    removed: number;
+    total: number;
+  };
+  exceptions: ExceptionRecord[];
+  comparedColumns: string[];
+  keyColumns: string[];
+  sourceAName: string;
+  sourceBName: string;
+  createdAt: string;
+}
+
+export function compareDatasets(sourceA: DatasetSource, sourceB: DatasetSource, config: ComparisonConfig): ComparisonResult {
   const { keyColumns, columnMapping = {}, caseSensitive = false, numericTolerance = 0, trimWhitespace = true } = config;
 
   if (!keyColumns || keyColumns.length === 0) {
@@ -37,7 +63,7 @@ export function compareDatasets(sourceA, sourceB, config) {
   }
 
   // Resolve column mapping (B col name -> A col name)
-  const resolveColB = (colB) => columnMapping[colB] || colB;
+  const resolveColB = (colB: string): string => columnMapping[colB] || colB;
 
   // Determine which columns to compare
   const sharedColumns = sourceA.columns.filter((colA) => {
@@ -59,14 +85,14 @@ export function compareDatasets(sourceA, sourceB, config) {
   });
   const indexB = buildIndex(sourceB.rows, keyColumnsB, { caseSensitive, trimWhitespace });
 
-  const exceptions = [];
-  const matchedKeys = new Set();
+  const exceptions: ExceptionRecord[] = [];
+  const matchedKeys = new Set<string>();
 
   // Compare: iterate source A, find matches in B
   for (const [key, rowA] of indexA.entries()) {
     if (indexB.has(key)) {
       matchedKeys.add(key);
-      const rowB = indexB.get(key);
+      const rowB = indexB.get(key)!;
       const diffs = compareRows(rowA, rowB, compareColumns, resolveColB, {
         caseSensitive,
         numericTolerance,
@@ -151,8 +177,8 @@ export function compareDatasets(sourceA, sourceB, config) {
   };
 }
 
-function buildIndex(rows, keyColumns, opts) {
-  const index = new Map();
+function buildIndex(rows: Record<string, unknown>[], keyColumns: string[], opts: NormalizeOpts): Map<string, Record<string, unknown>> {
+  const index = new Map<string, Record<string, unknown>>();
   for (const row of rows) {
     const key = keyColumns
       .map((col) => normalizeValue(row[col], opts))
@@ -162,7 +188,7 @@ function buildIndex(rows, keyColumns, opts) {
   return index;
 }
 
-function normalizeValue(val, opts) {
+function normalizeValue(val: unknown, opts: NormalizeOpts): string {
   if (val === null || val === undefined) return '';
   let s = String(val);
   if (opts.trimWhitespace) s = s.trim();
@@ -170,10 +196,15 @@ function normalizeValue(val, opts) {
   return s;
 }
 
-function compareRows(rowA, rowB, columns, resolveColB, opts) {
-  const diffs = [];
+function compareRows(
+  rowA: Record<string, unknown>,
+  rowB: Record<string, unknown>,
+  columns: string[],
+  resolveColB: (col: string) => string,
+  opts: CompareOpts
+): Array<{ column: string; valueA: unknown; valueB: unknown }> {
+  const diffs: Array<{ column: string; valueA: unknown; valueB: unknown }> = [];
   for (const colA of columns) {
-    const colB = Object.entries({}).length === 0 ? colA : colA; // resolveColB is for B->A, we need A->B
     const valA = rowA[colA];
     // Find the B column that maps to this A column
     const valB = rowB[colA] !== undefined ? rowB[colA] : rowB[resolveColB(colA)];
@@ -189,7 +220,7 @@ function compareRows(rowA, rowB, columns, resolveColB, opts) {
   return diffs;
 }
 
-function valuesEqual(a, b, opts) {
+function valuesEqual(a: unknown, b: unknown, opts: CompareOpts): boolean {
   if (a === b) return true;
   if (a == null && b == null) return true;
   if (a == null || b == null) return false;
@@ -215,17 +246,17 @@ function valuesEqual(a, b, opts) {
   return strA === strB;
 }
 
-function extractKeyValues(row, keyColumns) {
-  const values = {};
+function extractKeyValues(row: Record<string, unknown>, keyColumns: string[]): Record<string, unknown> {
+  const values: Record<string, unknown> = {};
   for (const col of keyColumns) {
     values[col] = row[col];
   }
   return values;
 }
 
-function remapRow(row, columnMapping) {
+function remapRow(row: Record<string, unknown>, columnMapping: Record<string, string>): Record<string, unknown> {
   if (!columnMapping || Object.keys(columnMapping).length === 0) return row;
-  const remapped = { __rowIndex: row.__rowIndex };
+  const remapped: Record<string, unknown> = { __rowIndex: row.__rowIndex };
   for (const [key, value] of Object.entries(row)) {
     if (key === '__rowIndex') continue;
     const mappedKey = columnMapping[key] || key;

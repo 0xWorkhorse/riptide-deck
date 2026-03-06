@@ -1,10 +1,33 @@
 import pg from 'pg';
 
-/**
- * Create a PostgreSQL connection and query data.
- */
+export interface PostgresConfig {
+  host?: string;
+  port?: number;
+  database: string;
+  user?: string;
+  password?: string;
+  ssl?: boolean;
+}
+
+export interface QueryResult {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+  sourceType: string;
+  sourceName: string;
+  queriedAt: string;
+}
+
+export interface QueryOptions {
+  limit?: number;
+  where?: string;
+}
+
 export class PostgresConnector {
-  constructor(config) {
+  private config: pg.PoolConfig;
+  private pool: pg.Pool | null;
+
+  constructor(config: PostgresConfig) {
     this.config = {
       host: config.host || 'localhost',
       port: config.port || 5432,
@@ -17,7 +40,7 @@ export class PostgresConnector {
     this.pool = null;
   }
 
-  async connect() {
+  async connect(): Promise<boolean> {
     this.pool = new pg.Pool(this.config);
     // Test the connection
     const client = await this.pool.connect();
@@ -25,18 +48,18 @@ export class PostgresConnector {
     return true;
   }
 
-  async testConnection() {
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
     try {
       await this.connect();
       await this.disconnect();
       return { success: true };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: (err as Error).message };
     }
   }
 
-  async getTables() {
-    const result = await this.pool.query(`
+  async getTables(): Promise<Array<{ schema: string; name: string; fullName: string }>> {
+    const result = await this.pool!.query(`
       SELECT table_schema, table_name
       FROM information_schema.tables
       WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
@@ -49,12 +72,12 @@ export class PostgresConnector {
     }));
   }
 
-  async getColumns(table) {
+  async getColumns(table: string): Promise<Array<{ name: string; type: string; nullable: boolean }>> {
     const [schema, tableName] = table.includes('.')
       ? table.split('.')
       : ['public', table];
 
-    const result = await this.pool.query(
+    const result = await this.pool!.query(
       `SELECT column_name, data_type, is_nullable
        FROM information_schema.columns
        WHERE table_schema = $1 AND table_name = $2
@@ -68,16 +91,8 @@ export class PostgresConnector {
     }));
   }
 
-  /**
-   * Query a table and return structured dataset.
-   * @param {string} tableOrQuery - Table name or raw SQL query
-   * @param {object} options
-   * @param {number} [options.limit] - Max rows
-   * @param {string} [options.where] - WHERE clause (for table mode)
-   * @returns {Promise<{ columns: string[], rows: object[], rowCount: number }>}
-   */
-  async query(tableOrQuery, options = {}) {
-    let sql;
+  async query(tableOrQuery: string, options: QueryOptions = {}): Promise<QueryResult> {
+    let sql: string;
     if (tableOrQuery.trim().toLowerCase().startsWith('select')) {
       sql = tableOrQuery;
     } else {
@@ -86,9 +101,9 @@ export class PostgresConnector {
       sql = `SELECT * FROM ${tableOrQuery}${where}${limit}`;
     }
 
-    const result = await this.pool.query(sql);
+    const result = await this.pool!.query(sql);
     const columns = result.fields.map((f) => f.name);
-    const rows = result.rows.map((row, idx) => ({
+    const rows = result.rows.map((row: Record<string, unknown>, idx: number) => ({
       __rowIndex: idx,
       ...row,
     }));
@@ -103,7 +118,7 @@ export class PostgresConnector {
     };
   }
 
-  async disconnect() {
+  async disconnect(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
       this.pool = null;

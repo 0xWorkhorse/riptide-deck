@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { X, Download, Loader2 } from 'lucide-react';
 
-export default function ExportDialog({ comparisonId, onClose }) {
+interface ExportDialogProps {
+  comparisonId: string;
+  onClose: () => void;
+}
+
+export default function ExportDialog({ comparisonId, onClose }: ExportDialogProps) {
   const t = useTranslations('export');
   const tCommon = useTranslations('common');
 
@@ -38,7 +43,7 @@ export default function ExportDialog({ comparisonId, onClose }) {
     onClose();
   }
 
-  function downloadBlob(blob, filename) {
+  function downloadBlob(blob: Blob, filename: string) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

@@ -9,6 +9,9 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   flexRender,
+  ColumnDef,
+  SortingState,
+  RowSelectionState,
 } from '@tanstack/react-table';
 import {
   CheckCircle,
@@ -23,39 +26,60 @@ import {
   X,
   Check,
   Loader2,
+  LucideIcon,
 } from 'lucide-react';
 import ExportDialog from '../../components/ExportDialog';
 
-const STATUS_ICONS = {
+const STATUS_ICONS: Record<string, LucideIcon> = {
   matched: CheckCircle,
   modified: AlertTriangle,
   added: PlusCircle,
   removed: MinusCircle,
 };
 
+interface ExceptionRow {
+  id: string;
+  status: string;
+  key_value: string;
+  sourceA: Record<string, unknown> | null;
+  sourceB: Record<string, unknown> | null;
+  differences: Array<{ column: string; valueA: unknown; valueB: unknown }>;
+  enrichedValues: Record<string, unknown>;
+  resolution: string | null;
+}
+
+interface Comparison {
+  name: string;
+  config: {
+    keyColumns: string[];
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
 export default function ComparisonResultPage() {
   const t = useTranslations('exceptions');
   const tCommon = useTranslations('common');
   const params = useParams();
-  const comparisonId = params.id;
+  const comparisonId = params.id as string;
 
-  const [comparison, setComparison] = useState(null);
-  const [exceptions, setExceptions] = useState([]);
-  const [counts, setCounts] = useState({ matched: 0, modified: 0, added: 0, removed: 0, total: 0 });
+  const [comparison, setComparison] = useState<Comparison | null>(null);
+  const [exceptions, setExceptions] = useState<ExceptionRow[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({ matched: 0, modified: 0, added: 0, removed: 0, total: 0 });
   const [statusFilter, setStatusFilter] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
-  const [sorting, setSorting] = useState([]);
-  const [rowSelection, setRowSelection] = useState({});
-  const [editingCell, setEditingCell] = useState(null);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [editingCell, setEditingCell] = useState<{ exId: string; col: string } | null>(null);
   const [editValue, setEditValue] = useState('');
   const [showExport, setShowExport] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchExceptions = useCallback(async () => {
-    const params = new URLSearchParams();
-    if (statusFilter) params.set('status', statusFilter);
-    if (searchFilter) params.set('search', searchFilter);
-    const res = await fetch(`/api/comparisons/${comparisonId}/exceptions?${params}`);
+    const searchParams = new URLSearchParams();
+    if (statusFilter) searchParams.set('status', statusFilter);
+    if (searchFilter) searchParams.set('search', searchFilter);
+    const res = await fetch(`/api/comparisons/${comparisonId}/exceptions?${searchParams}`);
     const data = await res.json();
     setExceptions(data.exceptions || []);
     setCounts(data.counts || {});
@@ -75,7 +99,7 @@ export default function ComparisonResultPage() {
     if (!loading) fetchExceptions();
   }, [statusFilter, searchFilter, fetchExceptions, loading]);
 
-  const handleUpdateException = useCallback(async (exceptionId, updates) => {
+  const handleUpdateException = useCallback(async (exceptionId: string, updates: Record<string, unknown>) => {
     await fetch(`/api/comparisons/${comparisonId}/exceptions`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -84,8 +108,8 @@ export default function ComparisonResultPage() {
     fetchExceptions();
   }, [comparisonId, fetchExceptions]);
 
-  const handleBulkUpdate = useCallback(async (updates) => {
-    const ids = Object.keys(rowSelection).map((idx) => exceptions[idx]?.id).filter(Boolean);
+  const handleBulkUpdate = useCallback(async (updates: Record<string, unknown>) => {
+    const ids = Object.keys(rowSelection).map((idx) => exceptions[Number(idx)]?.id).filter(Boolean);
     if (ids.length === 0) return;
     await fetch(`/api/comparisons/${comparisonId}/exceptions`, {
       method: 'PATCH',
@@ -96,12 +120,12 @@ export default function ComparisonResultPage() {
     fetchExceptions();
   }, [comparisonId, rowSelection, exceptions, fetchExceptions]);
 
-  const handleEnrichField = useCallback(async (exceptionId, currentEnriched, column, value) => {
+  const handleEnrichField = useCallback(async (exceptionId: string, currentEnriched: Record<string, unknown>, column: string, value: string) => {
     const enrichedValues = { ...currentEnriched, [column]: value };
     await handleUpdateException(exceptionId, { enrichedValues });
   }, [handleUpdateException]);
 
-  const columns = useMemo(() => {
+  const columns = useMemo((): ColumnDef<ExceptionRow>[] => {
     if (exceptions.length === 0) return [];
     const dataCols = comparison?.config?.keyColumns || [];
     const allCols = exceptions[0]?.sourceA
@@ -133,7 +157,7 @@ export default function ComparisonResultPage() {
         accessorKey: 'status',
         header: t('summary'),
         cell: ({ getValue }) => {
-          const status = getValue();
+          const status = getValue() as string;
           const Icon = STATUS_ICONS[status] || AlertTriangle;
           return (
             <span className={`badge badge-${status}`}>
@@ -144,7 +168,7 @@ export default function ComparisonResultPage() {
         },
         size: 120,
       },
-      ...allCols.map((col) => ({
+      ...allCols.map((col): ColumnDef<ExceptionRow> => ({
         id: col,
         accessorFn: (row) => {
           const enriched = row.enrichedValues?.[col];
@@ -193,7 +217,7 @@ export default function ComparisonResultPage() {
             );
           }
 
-          const val = getValue();
+          const val = getValue() as string;
           return (
             <div
               className={`group flex items-center gap-1 ${diff ? 'bg-status-modified/10 rounded px-1' : ''} ${enriched ? 'ring-1 ring-brand-500/50 rounded px-1' : ''}`}

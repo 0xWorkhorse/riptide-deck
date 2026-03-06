@@ -1,8 +1,13 @@
-import { parseCSV } from './csv.js';
-import { parseExcel } from './excel.js';
-import { parseJSON } from './json.js';
+import { parseCSV } from './csv';
+import { parseExcel } from './excel';
+import { parseJSON } from './json';
 
-const PARSERS = {
+interface ParserEntry {
+  parse: (buf: Buffer, opts?: Record<string, unknown>) => unknown;
+  async: boolean;
+}
+
+const PARSERS: Record<string, ParserEntry> = {
   '.csv': { parse: (buf, opts) => parseCSV(buf, opts), async: false },
   '.tsv': { parse: (buf, opts) => parseCSV(buf, { ...opts, delimiter: '\t' }), async: false },
   '.txt': { parse: (buf, opts) => parseCSV(buf, opts), async: false },
@@ -22,14 +27,18 @@ export const SUPPORTED_MIME_TYPES = [
   'application/vnd.ms-excel',
 ];
 
-/**
- * Parse a file buffer based on its extension.
- * @param {Buffer} buffer - File content
- * @param {string} filename - Original filename (used for extension detection)
- * @param {object} [options] - Parser-specific options
- * @returns {Promise<{ columns: string[], rows: object[], rowCount: number }>}
- */
-export async function parseFile(buffer, filename, options = {}) {
+export interface ParseResult {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+  sourceType: string;
+  sourceName: string;
+  parsedAt: string;
+  errors?: Array<{ row?: number; type: string; code: string; message: string }>;
+  sheets?: string[];
+}
+
+export async function parseFile(buffer: Buffer, filename: string, options: Record<string, unknown> = {}): Promise<ParseResult> {
   const ext = getExtension(filename);
   const parser = PARSERS[ext];
 
@@ -42,14 +51,14 @@ export async function parseFile(buffer, filename, options = {}) {
   const result = parser.async ? await parser.parse(buffer, options) : parser.parse(buffer, options);
 
   return {
-    ...result,
+    ...(result as Record<string, unknown>),
     sourceType: 'file',
     sourceName: filename,
     parsedAt: new Date().toISOString(),
-  };
+  } as ParseResult;
 }
 
-function getExtension(filename) {
+function getExtension(filename: string): string {
   const dot = filename.lastIndexOf('.');
   if (dot === -1) return '';
   return filename.slice(dot).toLowerCase();

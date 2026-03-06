@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { compareDatasets } from '@/lib/comparison/engine.js';
+import { NextResponse, NextRequest } from 'next/server';
+import { compareDatasets } from '@/lib/comparison/engine';
 import {
   getDataset,
   saveComparison,
@@ -7,9 +7,9 @@ import {
   listComparisons,
   getComparison,
   deleteComparison,
-} from '@/lib/db/store.js';
+} from '@/lib/db/store';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { sourceAId, sourceBId, config, name } = body;
@@ -31,12 +31,12 @@ export async function POST(request) {
     const sourceA = {
       columns: datasetA.columns,
       rows: datasetA.data,
-      sourceName: datasetA.name,
+      sourceName: datasetA.name as string,
     };
     const sourceB = {
       columns: datasetB.columns,
       rows: datasetB.data,
-      sourceName: datasetB.name,
+      sourceName: datasetB.name as string,
     };
 
     const result = compareDatasets(sourceA, sourceB, config);
@@ -65,11 +65,11 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error('Comparison error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
 
-export async function GET(request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
@@ -85,7 +85,7 @@ export async function GET(request) {
   return NextResponse.json({ comparisons });
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 

@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const DB_PATH = path.join(process.cwd(), '.data', 'riptide-deck.db');
 
-let db = null;
+let db: Database.Database | null = null;
 
-function getDb() {
+function getDb(): Database.Database {
   if (!db) {
     const fs = require('fs');
     const dir = path.dirname(DB_PATH);
@@ -20,7 +20,7 @@ function getDb() {
   return db;
 }
 
-function initSchema(db) {
+function initSchema(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS datasets (
       id TEXT PRIMARY KEY,
@@ -85,7 +85,17 @@ function initSchema(db) {
 
 // === Datasets ===
 
-export function saveDataset(dataset) {
+export interface DatasetInput {
+  name?: string;
+  sourceName?: string;
+  sourceType?: string;
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+  metadata?: Record<string, unknown>;
+}
+
+export function saveDataset(dataset: DatasetInput): string {
   const db = getDb();
   const id = uuidv4();
   db.prepare(`
@@ -104,34 +114,51 @@ export function saveDataset(dataset) {
   return id;
 }
 
-export function getDataset(id) {
+export function getDataset(id: string) {
   const db = getDb();
-  const row = db.prepare('SELECT * FROM datasets WHERE id = ?').get(id);
+  const row = db.prepare('SELECT * FROM datasets WHERE id = ?').get(id) as Record<string, string> | undefined;
   if (!row) return null;
   return {
-    ...row,
-    columns: JSON.parse(row.columns),
-    data: JSON.parse(row.data),
+    id: row.id,
+    name: row.name,
+    source_type: row.source_type,
+    source_name: row.source_name,
+    row_count: Number(row.row_count),
+    created_at: row.created_at,
+    columns: JSON.parse(row.columns) as string[],
+    data: JSON.parse(row.data) as Record<string, unknown>[],
     metadata: row.metadata ? JSON.parse(row.metadata) : {},
   };
 }
 
 export function listDatasets() {
   const db = getDb();
-  return db
+  const rows = db
     .prepare('SELECT id, name, source_type, source_name, columns, row_count, created_at FROM datasets ORDER BY created_at DESC')
-    .all()
-    .map((r) => ({ ...r, columns: JSON.parse(r.columns) }));
+    .all() as Record<string, unknown>[];
+  return rows.map((r) => ({ ...r, columns: JSON.parse(r.columns as string) }));
 }
 
-export function deleteDataset(id) {
+export function deleteDataset(id: string) {
   const db = getDb();
   db.prepare('DELETE FROM datasets WHERE id = ?').run(id);
 }
 
 // === Connections ===
 
-export function saveConnection(conn) {
+export interface ConnectionInput {
+  id?: string;
+  name: string;
+  dbType: string;
+  host: string;
+  port: number;
+  database: string;
+  username?: string;
+  password?: string;
+  ssl?: boolean;
+}
+
+export function saveConnection(conn: ConnectionInput): string {
   const db = getDb();
   const id = conn.id || uuidv4();
   db.prepare(`
@@ -158,19 +185,29 @@ export function listConnections() {
     .all();
 }
 
-export function getConnection(id) {
+export function getConnection(id: string) {
   const db = getDb();
-  return db.prepare('SELECT * FROM connections WHERE id = ?').get(id);
+  return db.prepare('SELECT * FROM connections WHERE id = ?').get(id) as Record<string, unknown> | undefined;
 }
 
-export function deleteConnection(id) {
+export function deleteConnection(id: string) {
   const db = getDb();
   db.prepare('DELETE FROM connections WHERE id = ?').run(id);
 }
 
 // === Comparisons ===
 
-export function saveComparison(comparison) {
+export interface ComparisonInput {
+  id?: string;
+  name?: string;
+  sourceAId: string;
+  sourceBId: string;
+  config: Record<string, unknown>;
+  summary?: Record<string, unknown>;
+  status?: string;
+}
+
+export function saveComparison(comparison: ComparisonInput): string {
   const db = getDb();
   const id = comparison.id || uuidv4();
   db.prepare(`
@@ -189,26 +226,32 @@ export function saveComparison(comparison) {
   return id;
 }
 
-export function getComparison(id) {
+export function getComparison(id: string) {
   const db = getDb();
-  const row = db.prepare('SELECT * FROM comparisons WHERE id = ?').get(id);
+  const row = db.prepare('SELECT * FROM comparisons WHERE id = ?').get(id) as Record<string, string> | undefined;
   if (!row) return null;
   return {
-    ...row,
-    config: JSON.parse(row.config),
-    summary: row.summary ? JSON.parse(row.summary) : {},
+    id: row.id,
+    name: row.name,
+    source_a_id: row.source_a_id,
+    source_b_id: row.source_b_id,
+    status: row.status,
+    created_at: row.created_at,
+    completed_at: row.completed_at,
+    config: JSON.parse(row.config) as Record<string, unknown>,
+    summary: row.summary ? JSON.parse(row.summary) as Record<string, number> : {},
   };
 }
 
 export function listComparisons() {
   const db = getDb();
-  return db
+  const rows = db
     .prepare('SELECT id, name, source_a_id, source_b_id, summary, status, created_at, completed_at FROM comparisons ORDER BY created_at DESC')
-    .all()
-    .map((r) => ({ ...r, summary: r.summary ? JSON.parse(r.summary) : {} }));
+    .all() as Record<string, unknown>[];
+  return rows.map((r) => ({ ...r, summary: r.summary ? JSON.parse(r.summary as string) : {} }));
 }
 
-export function deleteComparison(id) {
+export function deleteComparison(id: string) {
   const db = getDb();
   const transaction = db.transaction(() => {
     db.prepare('DELETE FROM exceptions WHERE comparison_id = ?').run(id);
@@ -219,14 +262,26 @@ export function deleteComparison(id) {
 
 // === Exceptions ===
 
-export function saveExceptions(comparisonId, exceptions) {
+export interface ExceptionInput {
+  id: string;
+  status: string;
+  key: string;
+  keyValues?: Record<string, unknown>;
+  sourceA?: Record<string, unknown> | null;
+  sourceB?: Record<string, unknown> | null;
+  differences?: Array<{ column: string; valueA: unknown; valueB: unknown }>;
+  resolution?: string | null;
+  enrichedValues?: Record<string, unknown>;
+}
+
+export function saveExceptions(comparisonId: string, exceptions: ExceptionInput[]) {
   const db = getDb();
   const stmt = db.prepare(`
     INSERT INTO exceptions (id, comparison_id, status, key_value, key_values, source_a_data, source_b_data, differences, resolution, enriched_values)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  const transaction = db.transaction((items) => {
+  const transaction = db.transaction((items: ExceptionInput[]) => {
     for (const ex of items) {
       stmt.run(
         ex.id,
@@ -246,10 +301,17 @@ export function saveExceptions(comparisonId, exceptions) {
   transaction(exceptions);
 }
 
-export function getExceptions(comparisonId, filters = {}) {
+export interface ExceptionFilters {
+  status?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export function getExceptions(comparisonId: string, filters: ExceptionFilters = {}) {
   const db = getDb();
   let sql = 'SELECT * FROM exceptions WHERE comparison_id = ?';
-  const params = [comparisonId];
+  const params: (string | number)[] = [comparisonId];
 
   if (filters.status) {
     sql += ' AND status = ?';
@@ -273,25 +335,25 @@ export function getExceptions(comparisonId, filters = {}) {
     params.push(filters.offset);
   }
 
-  return db
+  const rows = db
     .prepare(sql)
-    .all(...params)
-    .map((r) => ({
+    .all(...params) as Record<string, unknown>[];
+  return rows.map((r) => ({
       ...r,
-      keyValues: r.key_values ? JSON.parse(r.key_values) : {},
-      sourceA: r.source_a_data ? JSON.parse(r.source_a_data) : null,
-      sourceB: r.source_b_data ? JSON.parse(r.source_b_data) : null,
-      differences: r.differences ? JSON.parse(r.differences) : [],
-      enrichedValues: r.enriched_values ? JSON.parse(r.enriched_values) : {},
+      keyValues: r.key_values ? JSON.parse(r.key_values as string) : {},
+      sourceA: r.source_a_data ? JSON.parse(r.source_a_data as string) : null,
+      sourceB: r.source_b_data ? JSON.parse(r.source_b_data as string) : null,
+      differences: r.differences ? JSON.parse(r.differences as string) : [],
+      enrichedValues: r.enriched_values ? JSON.parse(r.enriched_values as string) : {},
     }));
 }
 
-export function getExceptionCounts(comparisonId) {
+export function getExceptionCounts(comparisonId: string) {
   const db = getDb();
   const rows = db
     .prepare('SELECT status, COUNT(*) as count FROM exceptions WHERE comparison_id = ? GROUP BY status')
-    .all(comparisonId);
-  const counts = { matched: 0, modified: 0, added: 0, removed: 0 };
+    .all(comparisonId) as Array<{ status: string; count: number }>;
+  const counts: Record<string, number> = { matched: 0, modified: 0, added: 0, removed: 0 };
   for (const r of rows) {
     counts[r.status] = r.count;
   }
@@ -299,10 +361,17 @@ export function getExceptionCounts(comparisonId) {
   return counts;
 }
 
-export function updateException(id, updates) {
+export interface ExceptionUpdates {
+  status?: string;
+  resolution?: string;
+  enrichedValues?: Record<string, unknown>;
+  resolvedBy?: string;
+}
+
+export function updateException(id: string, updates: ExceptionUpdates) {
   const db = getDb();
-  const sets = [];
-  const params = [];
+  const sets: string[] = [];
+  const params: (string | number)[] = [];
 
   if (updates.status !== undefined) {
     sets.push('status = ?');
@@ -329,7 +398,7 @@ export function updateException(id, updates) {
   }
 }
 
-export function bulkUpdateExceptions(ids, updates) {
+export function bulkUpdateExceptions(ids: string[], updates: ExceptionUpdates) {
   const db = getDb();
   const transaction = db.transaction(() => {
     for (const id of ids) {

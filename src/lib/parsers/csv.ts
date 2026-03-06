@@ -1,15 +1,19 @@
 import Papa from 'papaparse';
 
-/**
- * Parse CSV/TSV content into a structured dataset.
- * @param {Buffer|string} content - Raw file content
- * @param {object} options - Parser options
- * @param {string} [options.delimiter] - Auto-detected if not provided
- * @param {boolean} [options.header=true] - First row is header
- * @param {string} [options.encoding='utf-8'] - File encoding
- * @returns {{ columns: string[], rows: object[], rowCount: number, errors: object[] }}
- */
-export function parseCSV(content, options = {}) {
+export interface CSVOptions {
+  delimiter?: string;
+  header?: boolean;
+  encoding?: BufferEncoding;
+}
+
+export interface CSVResult {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+  errors: Array<{ row?: number; type: string; code: string; message: string }>;
+}
+
+export function parseCSV(content: Buffer | string, options: CSVOptions = {}): CSVResult {
   const text = typeof content === 'string' ? content : content.toString(options.encoding || 'utf-8');
 
   const result = Papa.parse(text, {
@@ -17,11 +21,11 @@ export function parseCSV(content, options = {}) {
     delimiter: options.delimiter || '',
     dynamicTyping: true,
     skipEmptyLines: 'greedy',
-    transformHeader: (h) => h.trim(),
+    transformHeader: (h: string) => h.trim(),
   });
 
   const columns = result.meta.fields || [];
-  const rows = result.data.map((row, idx) => ({
+  const rows = (result.data as Record<string, unknown>[]).map((row, idx) => ({
     __rowIndex: idx,
     ...row,
   }));

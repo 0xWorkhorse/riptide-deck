@@ -1,27 +1,23 @@
-import { PostgresConnector } from './postgres.js';
-import { MySQLConnector } from './mysql.js';
+import { PostgresConnector } from './postgres';
+import { MySQLConnector } from './mysql';
 
-const CONNECTOR_TYPES = {
+type ConnectorClass = typeof PostgresConnector | typeof MySQLConnector;
+
+const CONNECTOR_TYPES: Record<string, ConnectorClass> = {
   postgres: PostgresConnector,
   postgresql: PostgresConnector,
   mysql: MySQLConnector,
   mariadb: MySQLConnector,
 };
 
-/**
- * Create a database connector by type.
- * @param {string} type - 'postgres', 'mysql', etc.
- * @param {object} config - Connection config
- * @returns {PostgresConnector|MySQLConnector}
- */
-export function createConnector(type, config) {
+export function createConnector(type: string, config: Record<string, unknown>): PostgresConnector | MySQLConnector {
   const ConnectorClass = CONNECTOR_TYPES[type.toLowerCase()];
   if (!ConnectorClass) {
     throw new Error(
       `Unsupported database type: ${type}. Supported: ${Object.keys(CONNECTOR_TYPES).join(', ')}`
     );
   }
-  return new ConnectorClass(config);
+  return new ConnectorClass(config as never);
 }
 
 export const SUPPORTED_DB_TYPES = [

@@ -11,7 +11,6 @@ import {
   Loader2,
   Database,
   Table2,
-  Play,
   Download,
   Eye,
   X,
@@ -26,10 +25,24 @@ const DB_TYPES = [
   { value: 'mysql', label: 'MySQL / MariaDB', defaultPort: 3306 },
 ];
 
+interface ConnectionRecord {
+  id: string;
+  name: string;
+  db_type: string;
+  host: string;
+  port: number;
+  database_name: string;
+  username?: string;
+  password?: string;
+  encrypted_password?: string;
+  ssl: boolean;
+  created_at: string;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Connection form                                                    */
 /* ------------------------------------------------------------------ */
-function ConnectionForm({ onSave, onCancel }) {
+function ConnectionForm({ onSave, onCancel }: { onSave: () => void; onCancel: () => void }) {
   const t = useTranslations('connections');
   const tCommon = useTranslations('common');
 
@@ -44,10 +57,10 @@ function ConnectionForm({ onSave, onCancel }) {
     ssl: false,
   });
   const [testing, setTesting] = useState(false);
-  const [testResult, setTestResult] = useState(null);
+  const [testResult, setTestResult] = useState<{ success: boolean; error?: string } | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const updateForm = (key, value) => {
+  const updateForm = (key: string, value: string | number | boolean) => {
     setForm((f) => {
       const updated = { ...f, [key]: value };
       if (key === 'dbType') {
@@ -273,19 +286,19 @@ function ConnectionForm({ onSave, onCancel }) {
 /* ------------------------------------------------------------------ */
 /*  Connection card with tables browser                                */
 /* ------------------------------------------------------------------ */
-function ConnectionCard({ connection, onDelete, onImport }) {
+function ConnectionCard({ connection, onDelete, onImport }: { connection: ConnectionRecord; onDelete: (id: string) => Promise<void>; onImport: (conn: ConnectionRecord, table: string) => Promise<void> }) {
   const t = useTranslations('connections');
   const tCommon = useTranslations('common');
 
   const [expanded, setExpanded] = useState(false);
-  const [tables, setTables] = useState([]);
+  const [tables, setTables] = useState<string[]>([]);
   const [loadingTables, setLoadingTables] = useState(false);
-  const [previewTable, setPreviewTable] = useState(null);
-  const [previewData, setPreviewData] = useState(null);
+  const [previewTable, setPreviewTable] = useState<string | null>(null);
+  const [previewData, setPreviewData] = useState<{ columns?: string[]; rows?: Record<string, unknown>[] } | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [importing, setImporting] = useState(null);
-  const [error, setError] = useState(null);
+  const [importing, setImporting] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleExpand = async () => {
     if (expanded) {
@@ -314,13 +327,13 @@ function ConnectionCard({ connection, onDelete, onImport }) {
       const data = await res.json();
       setTables(data.tables || []);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoadingTables(false);
     }
   };
 
-  const handlePreview = async (tableName) => {
+  const handlePreview = async (tableName: string) => {
     if (previewTable === tableName) {
       setPreviewTable(null);
       setPreviewData(null);
@@ -348,18 +361,18 @@ function ConnectionCard({ connection, onDelete, onImport }) {
       const data = await res.json();
       setPreviewData(data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoadingPreview(false);
     }
   };
 
-  const handleImport = async (tableName) => {
+  const handleImport = async (tableName: string) => {
     setImporting(tableName);
     try {
       await onImport(connection, tableName);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setImporting(null);
     }
@@ -474,7 +487,7 @@ function ConnectionCard({ connection, onDelete, onImport }) {
                         <div className="flex items-center justify-center py-4">
                           <Loader2 className="h-4 w-4 animate-spin text-brand-500" />
                         </div>
-                      ) : previewData?.rows?.length > 0 ? (
+                      ) : previewData?.rows && previewData.rows.length > 0 ? (
                         <div className="overflow-x-auto rounded-lg border border-border-subtle">
                           <table className="w-full text-xs">
                             <thead>
@@ -500,7 +513,7 @@ function ConnectionCard({ connection, onDelete, onImport }) {
                                         key={col}
                                         className="whitespace-nowrap px-3 py-1.5 font-mono text-text-primary"
                                       >
-                                        {row[col] ?? ''}
+                                        {(row[col] as string) ?? ''}
                                       </td>
                                     ),
                                   )}
@@ -531,12 +544,11 @@ function ConnectionCard({ connection, onDelete, onImport }) {
 /* ================================================================== */
 export default function ConnectionsPage() {
   const t = useTranslations('connections');
-  const tCommon = useTranslations('common');
 
-  const [connections, setConnections] = useState([]);
+  const [connections, setConnections] = useState<ConnectionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadConnections = useCallback(async () => {
     try {
@@ -545,7 +557,7 @@ export default function ConnectionsPage() {
       const data = await res.json();
       setConnections(data.connections || data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -555,17 +567,17 @@ export default function ConnectionsPage() {
     loadConnections();
   }, [loadConnections]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       const res = await fetch(`/api/connections?id=${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Delete failed');
       setConnections((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
-  const handleImport = async (connection, tableName) => {
+  const handleImport = async (connection: ConnectionRecord, tableName: string) => {
     const res = await fetch('/api/connections', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

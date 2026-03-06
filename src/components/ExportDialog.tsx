@@ -10,9 +10,16 @@ import {
   FileJson,
   Loader2,
   CheckCircle2,
+  LucideIcon,
 } from 'lucide-react';
 
-const FORMAT_OPTIONS = [
+interface FormatOption {
+  value: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+const FORMAT_OPTIONS: FormatOption[] = [
   { value: 'csv', icon: FileText, label: 'CSV' },
   { value: 'xlsx', icon: FileSpreadsheet, label: 'Excel (XLSX)' },
   { value: 'json', icon: FileJson, label: 'JSON' },
@@ -20,7 +27,12 @@ const FORMAT_OPTIONS = [
 
 const STATUS_OPTIONS = ['matched', 'modified', 'added', 'removed'];
 
-export default function ExportDialog({ comparisonId, onClose }) {
+interface ExportDialogProps {
+  comparisonId: string;
+  onClose: () => void;
+}
+
+export default function ExportDialog({ comparisonId, onClose }: ExportDialogProps) {
   const t = useTranslations('export');
   const tExc = useTranslations('exceptions');
   const tCommon = useTranslations('common');
@@ -33,10 +45,10 @@ export default function ExportDialog({ comparisonId, onClose }) {
   ]);
   const [enriched, setEnriched] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState(null);
-  const [error, setError] = useState(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleStatus = (status) => {
+  const toggleStatus = (status: string) => {
     setIncludeStatuses((prev) =>
       prev.includes(status)
         ? prev.filter((s) => s !== status)
@@ -77,12 +89,11 @@ export default function ExportDialog({ comparisonId, onClose }) {
       } else {
         // Direct file download
         const blob = await res.blob();
-        const ext = format === 'xlsx' ? 'xlsx' : format === 'json' ? 'json' : 'csv';
         const url = URL.createObjectURL(blob);
         setDownloadUrl(url);
       }
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setGenerating(false);
     }

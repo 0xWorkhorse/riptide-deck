@@ -10,9 +10,10 @@ import {
   Plug,
   History,
   Waves,
+  LucideIcon,
 } from 'lucide-react';
 
-const navItems = [
+const navItems: Array<{ key: string; href: string; icon: LucideIcon }> = [
   { key: 'dashboard', href: '/', icon: LayoutDashboard },
   { key: 'newComparison', href: '/comparison/new', icon: GitCompareArrows },
   { key: 'datasets', href: '/datasets', icon: Database },
@@ -25,7 +26,7 @@ export default function Sidebar() {
   const tApp = useTranslations('app');
   const pathname = usePathname();
 
-  function isActive(href) {
+  function isActive(href: string) {
     if (href === '/') {
       // Strip locale prefix and check for root
       const stripped = pathname.replace(/^\/[a-z]{2}(\/|$)/, '/');

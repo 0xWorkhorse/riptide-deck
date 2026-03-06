@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, DragEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Database,
-  Upload,
   FileUp,
   Trash2,
   Eye,
@@ -15,16 +14,32 @@ import {
   FileSpreadsheet,
 } from 'lucide-react';
 
+interface DatasetRecord {
+  id: string;
+  name: string;
+  columns: string[];
+  row_count?: number;
+  rowCount?: number;
+  columnCount?: number;
+  source_type?: string;
+  format?: string;
+  created_at?: string;
+  createdAt?: string;
+  uploadedAt?: string;
+  previewRows?: Record<string, unknown>[];
+  rows?: Record<string, unknown>[];
+}
+
 /* ------------------------------------------------------------------ */
 /*  File upload dropzone                                               */
 /* ------------------------------------------------------------------ */
-function FileDropzone({ onUpload, uploading }) {
+function FileDropzone({ onUpload, uploading }: { onUpload: (file: File) => void; uploading: boolean }) {
   const t = useTranslations('upload');
   const [dragOver, setDragOver] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
-    (e) => {
+    (e: DragEvent) => {
       e.preventDefault();
       setDragOver(false);
       const file = e.dataTransfer?.files?.[0];
@@ -76,7 +91,7 @@ function FileDropzone({ onUpload, uploading }) {
 /* ------------------------------------------------------------------ */
 /*  Dataset preview modal                                              */
 /* ------------------------------------------------------------------ */
-function PreviewModal({ dataset, onClose }) {
+function PreviewModal({ dataset, onClose }: { dataset: DatasetRecord; onClose: () => void }) {
   const t = useTranslations('datasets');
 
   const columns = dataset.columns || [];
@@ -137,7 +152,7 @@ function PreviewModal({ dataset, onClose }) {
                         key={col}
                         className="whitespace-nowrap px-4 py-2 font-mono text-text-primary"
                       >
-                        {row[col] ?? ''}
+                        {(row[col] as string) ?? ''}
                       </td>
                     ))}
                   </tr>
@@ -159,13 +174,13 @@ export default function DatasetsPage() {
   const tUpload = useTranslations('upload');
   const tCommon = useTranslations('common');
 
-  const [datasets, setDatasets] = useState([]);
+  const [datasets, setDatasets] = useState<DatasetRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [previewDataset, setPreviewDataset] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
+  const [previewDataset, setPreviewDataset] = useState<DatasetRecord | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadDatasets = useCallback(async () => {
     try {
@@ -174,7 +189,7 @@ export default function DatasetsPage() {
       const data = await res.json();
       setDatasets(data.datasets || data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -184,7 +199,7 @@ export default function DatasetsPage() {
     loadDatasets();
   }, [loadDatasets]);
 
-  const handleUpload = async (file) => {
+  const handleUpload = async (file: File) => {
     setUploading(true);
     setError(null);
     try {
@@ -194,20 +209,20 @@ export default function DatasetsPage() {
       if (!res.ok) throw new Error(tUpload('failed'));
       await loadDatasets();
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     setDeletingId(id);
     try {
       const res = await fetch(`/api/datasets?id=${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Delete failed');
       setDatasets((prev) => prev.filter((d) => d.id !== id));
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setDeletingId(null);
     }
@@ -217,7 +232,7 @@ export default function DatasetsPage() {
     (ds.name || '').toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString(undefined, {
       year: 'numeric',

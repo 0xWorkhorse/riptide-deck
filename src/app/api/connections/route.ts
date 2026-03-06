@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server';
-import { createConnector } from '@/lib/connectors/index.js';
+import { NextResponse, NextRequest } from 'next/server';
+import { createConnector } from '@/lib/connectors/index';
 import {
   saveConnection,
   listConnections,
   getConnection,
   deleteConnection,
   saveDataset,
-} from '@/lib/db/store.js';
+} from '@/lib/db/store';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action } = body;
@@ -32,12 +32,12 @@ export async function POST(request) {
       const conn = body.connectionId ? getConnection(body.connectionId) : body;
       const config = body.connectionId
         ? {
-            host: conn.host,
-            port: conn.port,
-            database: conn.database_name,
-            user: conn.username,
-            password: conn.encrypted_password,
-            ssl: conn.ssl,
+            host: conn!.host as string,
+            port: conn!.port as number,
+            database: conn!.database_name as string,
+            user: conn!.username as string,
+            password: conn!.encrypted_password as string,
+            ssl: conn!.ssl as boolean,
           }
         : {
             host: body.host,
@@ -48,7 +48,7 @@ export async function POST(request) {
             ssl: body.ssl,
           };
 
-      const connector = createConnector(conn?.db_type || body.dbType, config);
+      const connector = createConnector((conn?.db_type as string) || body.dbType, config);
       await connector.connect();
       const tables = await connector.getTables();
       await connector.disconnect();
@@ -60,7 +60,7 @@ export async function POST(request) {
       const conn = getConnection(body.connectionId);
       if (!conn) return NextResponse.json({ error: 'Connection not found' }, { status: 404 });
 
-      const connector = createConnector(conn.db_type, {
+      const connector = createConnector(conn.db_type as string, {
         host: conn.host,
         port: conn.port,
         database: conn.database_name,
@@ -79,7 +79,7 @@ export async function POST(request) {
       const conn = getConnection(body.connectionId);
       if (!conn) return NextResponse.json({ error: 'Connection not found' }, { status: 404 });
 
-      const connector = createConnector(conn.db_type, {
+      const connector = createConnector(conn.db_type as string, {
         host: conn.host,
         port: conn.port,
         database: conn.database_name,
@@ -97,7 +97,7 @@ export async function POST(request) {
       // Save as dataset
       const datasetId = saveDataset({
         name: body.name || `${conn.name}: ${body.table || 'query'}`,
-        sourceType: conn.db_type,
+        sourceType: conn.db_type as string,
         sourceName: `${conn.host}/${conn.database_name}/${body.table || 'query'}`,
         columns: result.columns,
         rows: result.rows,
@@ -117,7 +117,7 @@ export async function POST(request) {
     return NextResponse.json({ id, success: true });
   } catch (err) {
     console.error('Connection error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }
 
@@ -126,7 +126,7 @@ export async function GET() {
   return NextResponse.json({ connections });
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });

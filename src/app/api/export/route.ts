@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
-import { getComparison, getExceptions, getDataset } from '@/lib/db/store.js';
+import { NextResponse, NextRequest } from 'next/server';
+import { getComparison, getExceptions, getDataset } from '@/lib/db/store';
 import Papa from 'papaparse';
 import ExcelJS from 'exceljs';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { comparisonId, format = 'csv', includeStatuses, enriched = true } = body;
@@ -18,20 +18,16 @@ export async function POST(request) {
     }
 
     // Get exceptions with optional status filter
-    const filters = {};
-    if (includeStatuses && includeStatuses.length > 0) {
-      // Fetch all, then filter client side since our filter only supports one status
-    }
     const allExceptions = getExceptions(comparisonId);
 
     let exceptions = allExceptions;
     if (includeStatuses && includeStatuses.length > 0) {
-      exceptions = allExceptions.filter((e) => includeStatuses.includes(e.status));
+      exceptions = allExceptions.filter((e: Record<string, unknown>) => includeStatuses.includes(e.status));
     }
 
     // Build export rows
-    const datasetA = getDataset(comparison.source_a_id);
-    const columns = datasetA ? datasetA.columns : [];
+    const datasetA = getDataset(comparison.source_a_id as string);
+    const columns: string[] = datasetA ? datasetA.columns : [];
     const exportColumns = [
       '__status',
       '__resolution',
@@ -40,9 +36,9 @@ export async function POST(request) {
       '__differences',
     ];
 
-    const exportRows = exceptions.map((ex) => {
-      const baseData = ex.sourceA || ex.sourceB || {};
-      const enrichedVals = enriched ? ex.enrichedValues || {} : {};
+    const exportRows = exceptions.map((ex: Record<string, unknown>) => {
+      const baseData = (ex.sourceA || ex.sourceB || {}) as Record<string, unknown>;
+      const enrichedVals = enriched ? (ex.enrichedValues || {}) as Record<string, unknown> : {};
 
       // Merge: base data + enriched overrides
       const merged = { ...baseData };
@@ -52,7 +48,7 @@ export async function POST(request) {
         }
       }
 
-      const row = {
+      const row: Record<string, unknown> = {
         __status: ex.status,
         __resolution: ex.resolution || '',
       };
@@ -67,8 +63,9 @@ export async function POST(request) {
           : '';
       }
 
-      row.__differences = ex.differences.length > 0
-        ? ex.differences.map((d) => `${d.column}: ${d.valueA} → ${d.valueB}`).join('; ')
+      const differences = (ex.differences || []) as Array<{ column: string; valueA: unknown; valueB: unknown }>;
+      row.__differences = differences.length > 0
+        ? differences.map((d) => `${d.column}: ${d.valueA} → ${d.valueB}`).join('; ')
         : '';
 
       return row;
@@ -119,13 +116,13 @@ export async function POST(request) {
         const addedRow = worksheet.addRow(row);
 
         // Color code by status
-        const statusColors = {
+        const statusColors: Record<string, string> = {
           matched: 'FF10B981',
           modified: 'FFF59E0B',
           added: 'FF3B82F6',
           removed: 'FFEF4444',
         };
-        const color = statusColors[row.__status];
+        const color = statusColors[row.__status as string];
         if (color) {
           addedRow.getCell('__status').fill = {
             type: 'pattern',
@@ -147,6 +144,6 @@ export async function POST(request) {
     return NextResponse.json({ error: `Unsupported format: ${format}` }, { status: 400 });
   } catch (err) {
     console.error('Export error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 }

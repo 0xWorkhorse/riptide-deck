@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, MouseEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import {
@@ -18,6 +18,16 @@ import {
   Calendar,
 } from 'lucide-react';
 
+interface ComparisonRecord {
+  id: string;
+  name?: string;
+  summary?: Record<string, number>;
+  created_at?: string;
+  createdAt?: string;
+  sourceAName?: string;
+  sourceBName?: string;
+}
+
 /* ================================================================== */
 /*  History page                                                       */
 /* ================================================================== */
@@ -27,11 +37,11 @@ export default function HistoryPage() {
   const tNav = useTranslations('nav');
 
 
-  const [comparisons, setComparisons] = useState([]);
+  const [comparisons, setComparisons] = useState<ComparisonRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [deletingId, setDeletingId] = useState(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadComparisons = useCallback(async () => {
     try {
@@ -40,7 +50,7 @@ export default function HistoryPage() {
       const data = await res.json();
       setComparisons(data.comparisons || data);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -50,7 +60,7 @@ export default function HistoryPage() {
     loadComparisons();
   }, [loadComparisons]);
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = async (id: string, e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDeletingId(id);
@@ -59,7 +69,7 @@ export default function HistoryPage() {
       if (!res.ok) throw new Error('Delete failed');
       setComparisons((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setDeletingId(null);
     }
@@ -69,7 +79,7 @@ export default function HistoryPage() {
     (comp.name || '').toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString(undefined, {
       year: 'numeric',

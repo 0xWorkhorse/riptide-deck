@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
-import { listDatasets, getDataset, deleteDataset } from '@/lib/db/store.js';
+import { NextResponse, NextRequest } from 'next/server';
+import { listDatasets, getDataset, deleteDataset } from '@/lib/db/store';
 
-export async function GET(request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
@@ -17,7 +17,7 @@ export async function GET(request) {
   return NextResponse.json({ datasets });
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 

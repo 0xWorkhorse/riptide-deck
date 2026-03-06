@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import { parseFile, SUPPORTED_EXTENSIONS } from '@/lib/parsers/index.js';
-import { saveDataset } from '@/lib/db/store.js';
+import { NextResponse, NextRequest } from 'next/server';
+import { parseFile, SUPPORTED_EXTENSIONS } from '@/lib/parsers/index';
+import { saveDataset } from '@/lib/db/store';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file');
+    const file = formData.get('file') as File | null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -13,16 +13,16 @@ export async function POST(request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = file.name;
-    const options = {};
+    const options: Record<string, unknown> = {};
 
     // Parse optional settings from form data
-    const sheet = formData.get('sheet');
-    if (sheet) options.sheet = isNaN(sheet) ? sheet : Number(sheet);
+    const sheet = formData.get('sheet') as string | null;
+    if (sheet) options.sheet = isNaN(Number(sheet)) ? sheet : Number(sheet);
 
-    const delimiter = formData.get('delimiter');
+    const delimiter = formData.get('delimiter') as string | null;
     if (delimiter) options.delimiter = delimiter;
 
-    const dataPath = formData.get('dataPath');
+    const dataPath = formData.get('dataPath') as string | null;
     if (dataPath) options.dataPath = dataPath;
 
     const parsed = await parseFile(buffer, filename, options);
@@ -52,7 +52,7 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error('Upload error:', err);
-    return NextResponse.json({ error: err.message }, { status: 400 });
+    return NextResponse.json({ error: (err as Error).message }, { status: 400 });
   }
 }
 

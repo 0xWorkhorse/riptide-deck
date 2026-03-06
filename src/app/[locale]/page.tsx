@@ -8,9 +8,10 @@ import {
   AlertTriangle,
   Database,
   Zap,
+  LucideIcon,
 } from 'lucide-react';
 
-function StatCard({ icon: Icon, label, value, color }) {
+function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: string; color: string }) {
   return (
     <div className="card flex items-center gap-4 p-5">
       <div
@@ -27,7 +28,7 @@ function StatCard({ icon: Icon, label, value, color }) {
   );
 }
 
-function QuickAction({ icon: Icon, label, description, href }) {
+function QuickAction({ icon: Icon, label, description, href }: { icon: LucideIcon; label: string; description: string; href: string }) {
   return (
     <Link href={href} className="card card-hover flex items-start gap-4 p-5">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-500/10 text-brand-400">

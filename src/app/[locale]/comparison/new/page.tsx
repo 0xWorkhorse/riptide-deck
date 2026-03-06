@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import {
@@ -16,19 +16,27 @@ import {
 
 const STEPS = ['selectDatasets', 'mapColumns', 'selectKeys', 'configure', 'review'];
 
+interface Dataset {
+  id: string;
+  name: string;
+  columns: string[];
+  row_count: number;
+  data?: Record<string, unknown>[];
+}
+
 export default function NewComparisonPage() {
   const t = useTranslations('comparison');
   const tCommon = useTranslations('common');
   const router = useRouter();
 
   const [step, setStep] = useState(0);
-  const [datasets, setDatasets] = useState([]);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [sourceAId, setSourceAId] = useState('');
   const [sourceBId, setSourceBId] = useState('');
-  const [sourceA, setSourceA] = useState(null);
-  const [sourceB, setSourceB] = useState(null);
-  const [columnMapping, setColumnMapping] = useState({});
-  const [keyColumns, setKeyColumns] = useState([]);
+  const [sourceA, setSourceA] = useState<Dataset | null>(null);
+  const [sourceB, setSourceB] = useState<Dataset | null>(null);
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
+  const [keyColumns, setKeyColumns] = useState<string[]>([]);
   const [config, setConfig] = useState({
     caseSensitive: false,
     numericTolerance: 0,
@@ -44,7 +52,7 @@ export default function NewComparisonPage() {
       .then((d) => setDatasets(d.datasets || []));
   }, []);
 
-  const loadDataset = useCallback(async (id, setter) => {
+  const loadDataset = useCallback(async (id: string, setter: (ds: Dataset) => void) => {
     const res = await fetch(`/api/datasets?id=${id}`);
     const data = await res.json();
     setter(data);
@@ -61,7 +69,7 @@ export default function NewComparisonPage() {
   // Auto-map columns when both datasets are loaded
   useEffect(() => {
     if (sourceA && sourceB) {
-      const mapping = {};
+      const mapping: Record<string, string> = {};
       for (const colB of sourceB.columns) {
         const exact = sourceA.columns.find((a) => a === colB);
         if (exact) {
@@ -77,7 +85,7 @@ export default function NewComparisonPage() {
     }
   }, [sourceA, sourceB]);
 
-  async function handleFileUpload(e) {
+  async function handleFileUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
@@ -211,7 +219,7 @@ export default function NewComparisonPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
-                    const auto = {};
+                    const auto: Record<string, string> = {};
                     for (const colB of sourceB.columns) {
                       const match = sourceA.columns.find(
                         (a) => a.toLowerCase() === colB.toLowerCase()
@@ -335,7 +343,7 @@ export default function NewComparisonPage() {
                   step="0.001"
                   min="0"
                   value={config.numericTolerance}
-                  onChange={(e) => setConfig((c) => ({ ...c, numericTolerance: e.target.value }))}
+                  onChange={(e) => setConfig((c) => ({ ...c, numericTolerance: Number(e.target.value) }))}
                   placeholder={t('configure.tolerancePlaceholder')}
                   className="w-full rounded-lg border border-border-default bg-surface-2 px-3 py-2 text-sm text-text-primary"
                 />

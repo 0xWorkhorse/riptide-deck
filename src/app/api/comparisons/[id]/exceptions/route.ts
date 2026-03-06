@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import {
   getExceptions,
   getExceptionCounts,
   updateException,
   bulkUpdateExceptions,
-} from '@/lib/db/store.js';
+} from '@/lib/db/store';
 
-export async function GET(request, { params }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { searchParams } = new URL(request.url);
 
@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
   return NextResponse.json({ exceptions, counts, total: counts.total });
 }
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: comparisonId } = await params;
   const body = await request.json();
 
