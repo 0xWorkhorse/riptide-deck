@@ -110,9 +110,12 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="border-t border-border-subtle px-4 py-3">
-        <p className="text-[11px] text-text-muted">
-          &copy; {new Date().getFullYear()} Riptide Music Publishing
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] text-text-muted">
+            &copy; {new Date().getFullYear()} Riptide Music Publishing
+          </p>
+          <span className="text-[10px] font-mono text-text-muted">v0.1.11</span>
+        </div>
       </div>
     </aside>
   );

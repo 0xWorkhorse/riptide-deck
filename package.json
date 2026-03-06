@@ -1,6 +1,6 @@
 {
   "name": "riptide-deck",
-  "version": "1.0.0",
+  "version": "0.1.11",
   "description": "Operational tools for **Riptide Music Publishing**.",
   "main": "index.js",
   "directories": {
