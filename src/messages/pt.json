@@ -224,23 +224,23 @@
     "configure": {
       "title": "Ajuste Fino da Comparação",
       "toleranceLabel": "Tolerância Numérica",
-      "tolerancePlaceholder": "ex. 0,01",
-      "toleranceHelp": "Pequenas diferenças dentro desse intervalo serão consideradas iguais (útil pra diferenças de arredondamento).",
-      "caseSensitive": "Diferenciar maiúsculas de minúsculas",
+      "tolerancePlaceholder": "ex.: 0.01",
+      "toleranceHelp": "Pequenas diferenças dentro dessa faixa serão consideradas iguais (útil pra diferenças de arredondamento).",
+      "caseSensitive": "Diferenciar maiúsculas e minúsculas",
       "ignoreWhitespace": "Ignorar espaços extras no início ou fim do texto",
-      "comparisonName": "Dê um Nome pra Esta Comparação",
-      "comparisonNamePlaceholder": "ex. Royalties Q4 vs. Registro Interno"
+      "comparisonName": "Dê um Nome a Esta Comparação",
+      "comparisonNamePlaceholder": "ex.: Royalties Q4 vs. Controle Interno"
     },
     "review": {
       "title": "Tudo Certo?",
       "source": "Origem",
       "target": "Destino",
-      "mappedColumns": "Colunas Associadas",
+      "mappedColumns": "Colunas Mapeadas",
       "keyColumns": "Campos-Chave",
       "settings": "Configurações",
       "run": "Executar Comparação"
     },
-    "running": "Processando os números…",
+    "running": "Processando os dados…",
     "complete": "Pronto — comparação concluída!"
   },
   "exceptions": {
@@ -286,7 +286,7 @@
       "resolved": "{count} resolvidas",
       "remaining": "{count} ainda abertas"
     },
-    "noExceptions": "Nenhuma diferença encontrada — seus datasets estão perfeitamente iguais!",
+    "noExceptions": "Nenhuma diferença encontrada — seus datasets batem perfeitamente!",
     "fieldDiff": {
       "sourceValue": "Na Origem",
       "targetValue": "No Destino",
@@ -308,7 +308,7 @@
       "includeMetadata": "Incluir detalhes da comparação (datas, configurações)",
       "includeSummary": "Incluir um resumo no topo",
       "includeNotes": "Incluir as notas que você adicionou",
-      "sideBySide": "Mostrar valores da origem e destino lado a lado"
+      "sideBySide": "Mostrar valores de origem e destino lado a lado"
     },
     "generate": "Criar Exportação",
     "generating": "Gerando seu arquivo…",
