@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+vendor/
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+out/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage & test output
+coverage/
+.nyc_output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Misc
+*.tmp
+*.bak
