@@ -22,13 +22,20 @@ interface ParsedSongData {
  */
 function parseStoryToSongData(story: string, context?: Record<string, string>): ParsedSongData {
   const text = story.trim();
-  // Extract song title - look for patterns like "called X", "titled X", "song is X"
+
+  // Extract song title - look for patterns like "called X", "titled X", "song X", quoted titles
   let title: string | null = null;
   const titlePatterns = [
-    /(?:song\s+(?:is\s+)?(?:called|titled|named)\s+)["']?([^"'\n,.]+)["']?/i,
-    /(?:called|titled|named)\s+["']?([^"'\n,.]+)["']?/i,
-    /["']([^"']+)["']\s+(?:by|from)/i,
-    /the\s+song\s+["']?([^"'\n,.]+)["']?/i,
+    /(?:song\s+(?:is\s+)?(?:called|titled|named))\s+["']([^"']+)["']/i,
+    /(?:called|titled|named)\s+["']([^"']+)["']/i,
+    /["']([^"']+)["']\s+(?:was\s+)?(?:written|by|from|is\s+a)/i,
+    /(?:song\s+(?:is\s+)?(?:called|titled|named))\s+([A-Z][A-Za-z\s]+?)(?:\s+(?:was|by|for|on|and|,|\.))/i,
+    /(?:called|titled|named)\s+([A-Z][A-Za-z\s]+?)(?:\s+(?:was|by|for|on|and|with|,|\.))/i,
+    // "X was written by" pattern (common narrative form)
+    /^([A-Z][A-Za-z\s]+?)\s+was\s+(?:written|composed|created|made|recorded)/i,
+    // "the song X" without "called/titled"
+    /the\s+song\s+["']([^"']+)["']/i,
+    /the\s+song\s+([A-Z][A-Za-z\s]+?)(?:\s+(?:was|by|for|on|,|\.))/i,
   ];
   for (const pattern of titlePatterns) {
     const match = text.match(pattern);
@@ -38,12 +45,15 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
     }
   }
 
-  // Extract artist/band
+  // Extract artist/band - use tight patterns to avoid capturing extra text
   let artist: string | null = null;
   const artistPatterns = [
-    /by\s+(?:a\s+(?:band|artist|group|singer)\s+called\s+)["']?([^"'\n,.]+)["']?/i,
-    /by\s+(?:the\s+)?(?:band|artist|group)\s+["']?([^"'\n,.]+)["']?/i,
-    /by\s+["']?([A-Z][^"'\n,.]+)["']?/i,
+    /(?:the\s+)?artist\s+is\s+["']([^"']+)["']/i,
+    /(?:the\s+)?artist\s+is\s+([A-Z][A-Za-z\s]+?)(?:\s*[.,]|\s+(?:and|who|which|on|for|from)\b)/i,
+    /(?:the\s+)?artist\s+is\s+([A-Z][A-Za-z\s]+?)$/im,
+    /by\s+(?:a\s+(?:band|artist|group|singer)\s+called\s+)["']?([^"'\n,.]+?)["']?(?:\s*[.,]|\s+(?:and|on|for|from)\b)/i,
+    /by\s+(?:the\s+)?(?:band|artist|group)\s+["']?([^"'\n,.]+?)["']?(?:\s*[.,]|\s+(?:and|on|for|from)\b)/i,
+    /(?:band|group)\s+(?:is\s+)?(?:called\s+)?["']?([A-Z][A-Za-z\s]+?)["']?(?:\s*[.,]|\s+(?:and|on|for|from)\b)/i,
   ];
   for (const pattern of artistPatterns) {
     const match = text.match(pattern);
@@ -53,11 +63,13 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
     }
   }
 
-  // Extract album
+  // Extract album - use tight word boundaries
   let album: string | null = null;
   const albumPatterns = [
-    /album\s+(?:is\s+)?(?:called|titled|named)\s+["']?([^"'\n,.]+)["']?/i,
-    /(?:on\s+the\s+album|album)\s+["']?([^"'\n,.]+)["']?/i,
+    /album\s+(?:is\s+)?(?:called|titled|named)\s+["']([^"']+)["']/i,
+    /(?:on\s+the\s+album|album)\s+["']([^"']+)["']/i,
+    /album\s+(?:is\s+)?(?:called|titled|named)\s+([A-Z][A-Za-z\s]+?)(?:\s*[.,]|\s+(?:on|by|and|for|from|the)\b)/i,
+    /(?:on\s+the\s+album|album)\s+([A-Z][A-Za-z\s]+?)(?:\s*[.,]|\s+(?:on|by|and|for|from|the)\b)/i,
   ];
   for (const pattern of albumPatterns) {
     const match = text.match(pattern);
@@ -70,34 +82,40 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
   // Extract record label
   let recordLabel: string | null = null;
   const labelPatterns = [
-    /(?:record\s+)?label\s+(?:is\s+)?["']?([^"'\n,.]+)["']?/i,
-    /(?:on|released\s+(?:by|on|through))\s+["']?([^"'\n,.]+?)\s+(?:records|music|entertainment|label)/i,
-    /["']?([^"'\n,.]+?)\s+(?:records|music|entertainment)\b/i,
+    /(?:record\s+)?label\s+(?:is\s+)?["']([^"']+)["']/i,
+    /(?:record\s+)?label\s+(?:is\s+)?([A-Z][A-Za-z\s]+?)(?:\s*[.,]|\s*$)/im,
+    /(?:on|released\s+(?:by|on|through))\s+["']?([A-Za-z\s]+?(?:Records|Music|Entertainment|Label))["']?/i,
+    /([A-Za-z\s]+?(?:Records|Music|Entertainment))\b/i,
   ];
   for (const pattern of labelPatterns) {
     const match = text.match(pattern);
     if (match) {
       recordLabel = match[1].trim();
-      // Check for a second word in the label name
-      const fullLabelMatch = text.match(new RegExp(match[1].trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+(?:Records|Music|Entertainment|Label)', 'i'));
-      if (fullLabelMatch) {
-        recordLabel = fullLabelMatch[0].trim();
-      }
       break;
     }
   }
+
+  // Build a set of extracted entities to exclude from contributor detection
+  const entityNames = new Set<string>();
+  if (title) entityNames.add(title.toLowerCase());
+  if (artist) entityNames.add(artist.toLowerCase());
+  if (album) entityNames.add(album.toLowerCase());
+  if (recordLabel) entityNames.add(recordLabel.toLowerCase());
 
   // Extract contributors - look for names with associated roles
   const contributors: ParsedContributor[] = [];
   const foundNames = new Set<string>();
 
-  // First pass: find names with explicit role mentions
   const roleKeywords: Record<string, string> = {
     'songwriter': 'songwriter',
     'writer': 'songwriter',
     'wrote': 'songwriter',
+    'written': 'songwriter',
     'writing': 'songwriter',
     'songwriting': 'songwriter',
+    'composed': 'composer',
+    'composer': 'composer',
+    'lyricist': 'lyricist',
     'producer': 'producer',
     'produced': 'producer',
     'arranger': 'arranger',
@@ -120,18 +138,30 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
 
   // Find all proper names in the text (2+ word capitalized sequences)
   const nameMatches = text.match(/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+/g) || [];
-  // Filter out common non-name phrases
-  const nonNames = new Set(['The Healing', 'The Album', 'The Song', 'The Band', 'The Record']);
 
   for (const name of nameMatches) {
-    if (nonNames.has(name) || foundNames.has(name)) continue;
-    if (name === title || name === artist || name === album) continue;
+    if (foundNames.has(name)) continue;
+    // Skip if this name matches any extracted entity
+    if (entityNames.has(name.toLowerCase())) continue;
+    // Skip common non-name phrases
+    if (/^(The|A|An|In|On|At|For|By|With)\s/i.test(name) && !text.includes(name + ' wrote') && !text.includes(name + ' produced')) continue;
+    // Skip names that look like record labels (end with Records, Music, etc.)
+    if (/(?:Records|Music|Entertainment|Label|Studios|Publishing)$/i.test(name)) continue;
 
-    // Find the sentence containing this name
+    // Find the sentence containing this name (split on periods and semicolons)
     const nameIdx = text.indexOf(name);
-    const sentenceStart = Math.max(0, text.lastIndexOf('.', nameIdx) + 1);
-    const sentenceEnd = text.indexOf('.', nameIdx + name.length);
-    const sentence = text.substring(sentenceStart, sentenceEnd > 0 ? sentenceEnd : text.length).toLowerCase();
+    const sentenceBreaks = ['.', ';', '!', '?'];
+    let sentenceStart = 0;
+    for (const br of sentenceBreaks) {
+      const idx = text.lastIndexOf(br, nameIdx);
+      if (idx >= 0 && idx + 1 > sentenceStart) sentenceStart = idx + 1;
+    }
+    let sentenceEnd = text.length;
+    for (const br of sentenceBreaks) {
+      const idx = text.indexOf(br, nameIdx + name.length);
+      if (idx >= 0 && idx < sentenceEnd) sentenceEnd = idx;
+    }
+    const sentence = text.substring(sentenceStart, sentenceEnd).toLowerCase();
 
     const roles: string[] = [];
     for (const [keyword, role] of Object.entries(roleKeywords)) {
@@ -141,12 +171,12 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
     }
 
     // Check if this person explicitly didn't make songwriting changes
-    const noSongwritingPattern = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ".*(?:didn't|did not|didn't).*(?:songwriting|writing|compositional)", 'i');
+    const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const noSongwritingPattern = new RegExp(escapedName + ".*(?:didn't|did not).*(?:songwriting|writing|compositional)", 'i');
     const noSongwriting = noSongwritingPattern.test(text);
 
     if (roles.length === 0) {
-      // Default to songwriter if mentioned in a songwriting context
-      if (sentence.includes('demo') || sentence.includes('wrote') || sentence.includes('chord') || sentence.includes('lyric') || sentence.includes('melody')) {
+      if (sentence.includes('demo') || sentence.includes('chord') || sentence.includes('lyric') || sentence.includes('melody')) {
         roles.push('songwriter');
       } else {
         roles.push('contributor');
@@ -165,8 +195,37 @@ function parseStoryToSongData(story: string, context?: Record<string, string>): 
       contributors.push({
         name,
         role,
-        splitType: role === 'songwriter' || role === 'composer' || role === 'lyricist' ? 'music' : 'music',
+        splitType: role === 'lyricist' ? 'lyrics' : 'music',
       });
+    }
+  }
+
+  // Also try to find first-name-only references and link them to full names
+  // e.g. "John wrote the music" where "John Smith" was already found
+  for (const fullName of Array.from(foundNames)) {
+    const firstName = fullName.split(' ')[0];
+    const escapedFirst = firstName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Check for "<firstName> wrote the music/lyrics" patterns
+    const musicPattern = new RegExp(`\\b${escapedFirst}\\b[^.]*(?:wrote|composed|created)[^.]*(?:music|melody|chords|instrumental)`, 'i');
+    const lyricsPattern = new RegExp(`\\b${escapedFirst}\\b[^.]*(?:wrote|composed|created)[^.]*(?:lyrics|words|text)`, 'i');
+
+    const didMusic = musicPattern.test(text);
+    const didLyrics = lyricsPattern.test(text);
+
+    if (didMusic || didLyrics) {
+      // Find existing entries for this person and update their role/splitType
+      const existingEntries = contributors.filter((c) => c.name === fullName);
+      if (existingEntries.length > 0) {
+        // Update the first entry with the appropriate type
+        if (didMusic && !didLyrics) {
+          existingEntries[0].splitType = 'music';
+          if (existingEntries[0].role === 'contributor') existingEntries[0].role = 'songwriter';
+        } else if (didLyrics && !didMusic) {
+          existingEntries[0].splitType = 'lyrics';
+          if (existingEntries[0].role === 'contributor') existingEntries[0].role = 'lyricist';
+        }
+        // Don't add duplicates
+      }
     }
   }
 
