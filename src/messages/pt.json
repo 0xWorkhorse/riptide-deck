@@ -157,7 +157,7 @@
     "supportedFormats": "Aceitamos arquivos CSV, TSV, Excel (XLSX/XLS) e JSON",
     "maxSize": "Até 200 MB por arquivo",
     "processing": "Lendo seu arquivo…",
-    "parsing": "Processando linhas…",
+    "parsing": "Processando as linhas…",
     "validating": "Verificando os dados…",
     "complete": "Envio concluído!",
     "failed": "O envio falhou — por favor, tente de novo",
@@ -191,7 +191,7 @@
     "title": "Comparar Dois Datasets",
     "steps": {
       "selectDatasets": "Escolher Datasets",
-      "mapColumns": "Associar Colunas",
+      "mapColumns": "Mapear Colunas",
       "selectKeys": "Escolher Campos-Chave",
       "configure": "Configurações",
       "review": "Revisar e Executar"
@@ -205,21 +205,21 @@
       "orUpload": "ou envie um novo arquivo"
     },
     "mapColumns": {
-      "title": "Associe as Colunas",
+      "title": "Combine as Colunas",
       "description": "Diga quais colunas da origem correspondem às colunas do destino. Colunas sem correspondência serão ignoradas.",
       "sourceColumn": "Coluna Origem",
       "targetColumn": "Coluna Destino",
-      "autoMap": "Associar Automaticamente",
+      "autoMap": "Mapear Automaticamente",
       "clearAll": "Limpar Tudo",
       "unmapped": "Sem Correspondência",
-      "mapped": "{count, plural, one {# coluna associada} other {# colunas associadas}}"
+      "mapped": "{count, plural, one {# coluna mapeada} other {# colunas mapeadas}}"
     },
     "selectKeys": {
       "title": "O Que Torna Cada Linha Única?",
       "description": "Escolha a(s) coluna(s) que identificam cada linha — como título da música, ISRC ou ID da obra. Vamos usar isso pra alinhar os registros entre os datasets.",
       "keyColumn": "Campo-Chave",
       "addKey": "Adicionar Outro Campo",
-      "compositeKeyNote": "Usando vários campos? Vamos cruzar pela combinação de todos eles."
+      "compositeKeyNote": "Usando vários campos? Vamos combinar todos eles pra fazer a correspondência."
     },
     "configure": {
       "title": "Ajuste Fino da Comparação",

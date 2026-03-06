@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Riptide Deck",
-    "subtitle": "Tu Centro de Publicacion Musical"
+    "subtitle": "Centro de Publicación Musical"
   },
   "nav": {
     "dashboard": "Inicio",
@@ -11,79 +11,79 @@
     "datasets": "Mis Datasets",
     "connections": "Conexiones",
     "history": "Historial",
-    "songRegistration": "Catalogo",
+    "songRegistration": "Catálogo",
     "dataTools": "Herramientas"
   },
   "dashboard": {
-    "welcome": "Que bueno verte de nuevo",
-    "description": "Tu centro para registrar canciones, importar catalogos, comparar datos de regalias y detectar discrepancias.",
+    "welcome": "Qué bueno verte de nuevo",
+    "description": "Tu centro para registrar canciones, importar catálogos, comparar datos de regalías y detectar discrepancias.",
     "quickActions": "Empecemos",
     "recentComparisons": "Comparaciones Recientes",
-    "noRecent": "Todavia no has hecho ninguna comparacion. Lanza una para ver los resultados aqui.",
+    "noRecent": "Todavía no has hecho ninguna comparación. Lanza una para ver los resultados aquí.",
     "stats": {
       "totalComparisons": "Comparaciones Hechas",
       "openExceptions": "Pendientes por Resolver",
       "datasetsLoaded": "Datasets Guardados",
       "connectionsActive": "Conexiones Activas",
-      "songsRegistered": "Canciones en el Catalogo",
+      "songsRegistered": "Canciones en el Catálogo",
       "documentsImported": "Documentos Importados"
     },
     "actions": {
-      "storyToSplits": "Cuentanos como se hizo la cancion y nosotros llenamos el registro por ti",
+      "storyToSplits": "Cuéntanos cómo se hizo la canción y nosotros llenamos el registro por ti",
       "documentToSplits": "Sube un estado de cuenta de BMI, Curve o un PDF para cruzarlo con MLC y SongView"
     }
   },
   "songs": {
-    "title": "Catalogo de Canciones",
+    "title": "Catálogo de Canciones",
     "subtitle": "Todas las canciones que has registrado, ya sea desde historias, documentos o a mano",
-    "newTitle": "Registrar una Nueva Cancion",
-    "newSubtitle": "Solo cuentanos la historia de tu cancion — quien la escribio, como nacio — y nosotros nos encargamos del resto",
-    "newSong": "Registrar Cancion",
-    "empty": "Tu catalogo esta vacio. Registra tu primera cancion contando su historia o importando un documento.",
-    "search": "Buscar por titulo, artista o album…",
+    "newTitle": "Registrar una Nueva Canción",
+    "newSubtitle": "Solo cuéntanos la historia de tu canción — quién la escribió, cómo nació — y nosotros nos encargamos del resto",
+    "newSong": "Registrar Canción",
+    "empty": "Tu catálogo está vacío. Registra tu primera canción contando su historia o importando un documento.",
+    "search": "Buscar por título, artista o álbum…",
     "view": "Ver Detalles",
     "sourceStory": "Desde Historia",
     "sourceDocument": "Desde Documento",
     "chat": {
-      "title": "Cuentanos la Historia",
-      "subtitle": "Describe tu cancion con tus propias palabras — nosotros sacamos los detalles",
-      "prompt": "Como se hizo esta cancion?",
-      "promptHint": "Cuentanos quien la escribio, quien la interpreto, el album, el sello — todo lo que sepas. Escribelo o toca el micro para hablar.",
-      "inputPlaceholder": "Empieza a contar la historia de tu cancion…",
+      "title": "Cuéntanos la Historia",
+      "subtitle": "Describe tu canción con tus propias palabras — nosotros sacamos los detalles",
+      "prompt": "¿Cómo se hizo esta canción?",
+      "promptHint": "Cuéntanos quién la escribió, quién la interpretó, el álbum, el sello — todo lo que sepas. Escríbelo o toca el micro para hablar.",
+      "inputPlaceholder": "Empieza a contar la historia de tu canción…",
       "startRecording": "Toca para hablar",
       "stopRecording": "Toca para parar",
       "noSpeech": "Tu navegador no soporta entrada de voz. No te preocupes, simplemente escribe tu historia.",
-      "foundInfo": "Listo! Esto es lo que encontre:",
-      "questionsNeeded": "Me faltan algunos datos — me ayudas?",
-      "couldNotParse": "No logre sacar suficiente info de eso. Podrias agregar mas sobre el titulo, el artista y quienes participaron?",
-      "error": "Algo salio mal. Por favor, intentalo de nuevo."
+      "foundInfo": "¡Listo! Esto es lo que encontré:",
+      "questionsNeeded": "Me faltan algunos datos — ¿me ayudas?",
+      "couldNotParse": "No logré sacar suficiente info de eso. ¿Podrías agregar más sobre el título, el artista y quiénes participaron?",
+      "error": "Algo salió mal. Por favor, inténtalo de nuevo."
     },
     "form": {
-      "songInfo": "Datos de la Cancion",
-      "title": "Titulo de la Cancion",
+      "songInfo": "Datos de la Canción",
+      "title": "Título de la Canción",
       "titlePlaceholder": "ej. The Healing Kind",
       "artist": "Artista o Banda",
       "artistPlaceholder": "ej. Side Talker",
-      "album": "Nombre del Album",
+      "album": "Nombre del Álbum",
       "albumPlaceholder": "ej. Alchemy",
-      "recordLabel": "Sello Discografico",
+      "recordLabel": "Sello Discográfico",
       "recordLabelPlaceholder": "ej. Metallic Champagne Records",
       "instrumental": "Esta es una pieza instrumental",
-      "instrumentalHint": "Sin letra — toda la participacion va al lado musical",
-      "contributors": "Quienes Participan",
+      "instrumentalHint": "Sin letra — toda la participación va al lado musical",
+      "contributors": "¿Quiénes Participan?",
       "addContributor": "Agregar una Persona",
-      "noContributors": "Aun no hay nadie — usa el boton de arriba para agregar compositores, productores y demas",
+      "noContributors": "Aún no hay nadie — usa el botón de arriba para agregar compositores, productores y demás",
       "name": "Nombre Completo",
       "role": "Rol",
-      "split": "Participacion",
-      "splitType": "Tipo de Participacion",
-      "music": "Musica",
+      "split": "Participación",
+      "splitType": "Tipo de Participación",
+      "music": "Música",
       "lyrics": "Letra",
       "distributeSplits": "Dividir en Partes Iguales",
       "splitsWarning": "Las participaciones suman {total}% — tienen que dar exactamente 100%",
-      "register": "Registrar Esta Cancion",
-      "registered": "Cancion Registrada!",
-      "redirecting": "Llevandote de vuelta al catalogo…"
+      "register": "Registrar Esta Canción",
+      "registered": "¡Canción Registrada!",
+      "redirecting": "Llevándote de vuelta al catálogo…"
     },
     "roles": {
       "songwriter": "Compositor/a",
@@ -93,43 +93,43 @@
       "arranger": "Arreglista",
       "instrumentalist": "Instrumentista",
       "vocalist": "Vocalista",
-      "session_musician": "Musico de Sesion",
+      "session_musician": "Músico de Sesión",
       "engineer": "Ingeniero/a",
       "contributor": "Colaborador/a"
     },
     "detail": {
-      "title": "Detalles de la Cancion",
-      "notFound": "No pudimos encontrar esa cancion",
+      "title": "Detalles de la Canción",
+      "notFound": "No pudimos encontrar esa canción",
       "identifiers": "IDs de la Industria",
       "hasLyrics": "Tiene Letra"
     }
   },
   "documents": {
     "title": "Importar un Documento",
-    "subtitle": "Sube estados de cuenta o hojas de splits para cruzar tu catalogo con las diferentes PROs",
-    "empty": "Aun no hay documentos. Elige un formato arriba y sube tu primer archivo para empezar.",
+    "subtitle": "Sube estados de cuenta o hojas de splits para cruzar tu catálogo con las diferentes PROs",
+    "empty": "Aún no hay documentos. Elige un formato arriba y sube tu primer archivo para empezar.",
     "search": "Buscar en tus documentos…",
-    "song": "cancion",
+    "song": "canción",
     "songs": "canciones",
     "searchSongs": "Buscar canciones en este documento…",
     "noSongs": "No se encontraron canciones en este documento.",
-    "noSongsFound": "Ninguna cancion coincide con tu busqueda.",
+    "noSongsFound": "Ninguna canción coincide con tu búsqueda.",
     "notFound": "No pudimos encontrar ese documento",
     "backToDocuments": "Volver a Todos los Documentos",
     "lookupAll": "Cruzar Todas las Canciones",
     "upload": {
       "title": "Sube un Archivo",
-      "description": "Arrastra un estado de cuenta o una hoja de splits — aceptamos CSV de BMI, Excel de Curve y PDF generico.",
+      "description": "Arrastra un estado de cuenta o una hoja de splits — aceptamos CSV de BMI, Excel de Curve y PDF genérico.",
       "selectType": "Primero elige un formato de documento",
       "selectTypeFirst": "Elige un formato arriba y luego arrastra tu archivo o haz clic para buscarlo",
-      "dropzone": "Arrastra tu archivo aqui, o haz clic para buscar",
+      "dropzone": "Arrastra tu archivo aquí, o haz clic para buscar",
       "accepted": "Aceptado"
     },
     "status": {
       "match": "Verificado",
       "missing": "No Encontrado",
       "conflict": "Discrepancia",
-      "pending": "En Revision"
+      "pending": "En Revisión"
     },
     "songDetail": {
       "identifiers": "IDs de la Industria",
@@ -140,18 +140,18 @@
       "publishers": "editores",
       "writersTitle": "Escritores y Compositores",
       "publishersTitle": "Editores y Administradores",
-      "noWriters": "No hay escritores registrados para esta cancion",
+      "noWriters": "No hay escritores registrados para esta canción",
       "crossReference": "Cruzar Referencia",
       "lookupAll": "Buscar Todos",
-      "additionalPublishers": "Tambien encontramos estos editores:",
-      "missingItems": "no se encontraron en tu catalogo",
+      "additionalPublishers": "También encontramos estos editores:",
+      "missingItems": "no se encontraron en tu catálogo",
       "conflictItems": "los datos no coinciden",
       "confidence": "Confianza del Resultado"
     }
   },
   "upload": {
     "title": "Subir un Dataset",
-    "dropzone": "Arrastra tus archivos aqui, o haz clic para buscar",
+    "dropzone": "Arrastra tus archivos aquí, o haz clic para buscar",
     "dropzoneActive": "Suelta para subir",
     "browse": "Buscar Archivos",
     "supportedFormats": "Aceptamos archivos CSV, TSV, Excel (XLSX/XLS) y JSON",
@@ -159,18 +159,18 @@
     "processing": "Leyendo tu archivo…",
     "parsing": "Procesando filas…",
     "validating": "Revisando los datos…",
-    "complete": "Subida completa!",
-    "failed": "La subida fallo — por favor intentalo de nuevo",
+    "complete": "¡Subida completa!",
+    "failed": "La subida falló — por favor inténtalo de nuevo",
     "rowCount": "{count, plural, one {# fila encontrada} other {# filas encontradas}}",
     "columnCount": "{count, plural, one {# columna encontrada} other {# columnas encontradas}}",
     "datasetName": "Ponle un nombre",
-    "datasetNamePlaceholder": "ej. Regalias Q4 2025",
+    "datasetNamePlaceholder": "ej. Regalías Q4 2025",
     "description": "Notas (opcional)",
     "descriptionPlaceholder": "Agrega cualquier contexto sobre este dataset…"
   },
   "datasets": {
     "title": "Mis Datasets",
-    "empty": "Todavia no hay datasets. Sube un archivo para empezar.",
+    "empty": "Todavía no hay datasets. Sube un archivo para empezar.",
     "search": "Buscar datasets…",
     "columns": {
       "name": "Nombre",
@@ -178,7 +178,7 @@
       "columns": "Columnas",
       "format": "Formato",
       "uploadedAt": "Subido",
-      "size": "Tamano"
+      "size": "Tamaño"
     },
     "actions": {
       "preview": "Vista Previa",
@@ -197,7 +197,7 @@
       "review": "Revisar y Lanzar"
     },
     "selectDatasets": {
-      "title": "Cuales dos datasets quieres comparar?",
+      "title": "¿Cuáles dos datasets quieres comparar?",
       "sourceLabel": "Primer Dataset (origen)",
       "targetLabel": "Segundo Dataset (destino)",
       "sourcePlaceholder": "Elige el origen…",
@@ -206,42 +206,42 @@
     },
     "mapColumns": {
       "title": "Empareja las Columnas",
-      "description": "Dinos que columnas del origen corresponden a columnas del destino. Las que no se emparejen se saltaran.",
+      "description": "Dinos qué columnas del origen corresponden a columnas del destino. Las que no se emparejen se saltarán.",
       "sourceColumn": "Columna Origen",
       "targetColumn": "Columna Destino",
-      "autoMap": "Emparejar Automaticamente",
+      "autoMap": "Emparejar Automáticamente",
       "clearAll": "Limpiar Todo",
       "unmapped": "Sin Emparejar",
       "mapped": "{count, plural, one {# columna emparejada} other {# columnas emparejadas}}"
     },
     "selectKeys": {
-      "title": "Que Hace Unica a Cada Fila?",
-      "description": "Elige la(s) columna(s) que identifican cada fila — como un titulo de cancion, ISRC o ID de obra. Las usaremos para alinear los registros entre datasets.",
+      "title": "¿Qué Hace Única a Cada Fila?",
+      "description": "Elige la(s) columna(s) que identifican cada fila — como un título de canción, ISRC o ID de obra. Las usaremos para alinear los registros entre datasets.",
       "keyColumn": "Campo Clave",
       "addKey": "Agregar Otro Campo",
-      "compositeKeyNote": "Usas varias claves? Haremos el emparejamiento con la combinacion de todas."
+      "compositeKeyNote": "¿Usas varias claves? Haremos el emparejamiento con la combinación de todas."
     },
     "configure": {
-      "title": "Ajusta tu Comparacion",
-      "toleranceLabel": "Tolerancia Numerica",
+      "title": "Ajusta tu Comparación",
+      "toleranceLabel": "Tolerancia Numérica",
       "tolerancePlaceholder": "ej. 0.01",
-      "toleranceHelp": "Las diferencias dentro de este rango contaran como coincidencia (util para redondeos).",
-      "caseSensitive": "Distinguir entre mayusculas y minusculas",
+      "toleranceHelp": "Las diferencias dentro de este rango contarán como coincidencia (útil para redondeos).",
+      "caseSensitive": "Distinguir entre mayúsculas y minúsculas",
       "ignoreWhitespace": "Ignorar espacios extra al inicio o final del texto",
-      "comparisonName": "Nombre de Esta Comparacion",
-      "comparisonNamePlaceholder": "ej. Regalias Q4 vs. Libro Interno"
+      "comparisonName": "Nombre de Esta Comparación",
+      "comparisonNamePlaceholder": "ej. Regalías Q4 vs. Libro Interno"
     },
     "review": {
-      "title": "Todo se ve bien?",
+      "title": "¿Todo se ve bien?",
       "source": "Origen",
       "target": "Destino",
       "mappedColumns": "Columnas Emparejadas",
       "keyColumns": "Campos Clave",
       "settings": "Ajustes",
-      "run": "Lanzar Comparacion"
+      "run": "Lanzar Comparación"
     },
-    "running": "Procesando los numeros…",
-    "complete": "Listo — comparacion terminada!"
+    "running": "Procesando los números…",
+    "complete": "¡Listo — comparación terminada!"
   },
   "exceptions": {
     "title": "Resultados y Excepciones",
@@ -254,8 +254,8 @@
       "modified": "Modificado"
     },
     "statusDescription": {
-      "matched": "Estas filas son identicas en ambos datasets",
-      "added": "Estas filas solo aparecen en el destino — no estan en el origen",
+      "matched": "Estas filas son idénticas en ambos datasets",
+      "added": "Estas filas solo aparecen en el destino — no están en el origen",
       "removed": "Estas filas solo aparecen en el origen — faltan en el destino",
       "modified": "Estas filas existen en ambos, pero algunos valores son diferentes"
     },
@@ -284,9 +284,9 @@
     "counts": {
       "total": "{count, plural, one {# pendiente} other {# pendientes}}",
       "resolved": "{count} resueltos",
-      "remaining": "{count} aun abiertos"
+      "remaining": "{count} aún abiertos"
     },
-    "noExceptions": "No se encontraron diferencias — tus datasets coinciden perfectamente!",
+    "noExceptions": "¡No se encontraron diferencias — tus datasets coinciden perfectamente!",
     "fieldDiff": {
       "sourceValue": "En Origen",
       "targetValue": "En Destino",
@@ -297,39 +297,39 @@
     "title": "Exportar tu Reporte",
     "format": "Elige un Formato",
     "formats": {
-      "csv": "Hoja de Calculo CSV",
+      "csv": "Hoja de Cálculo CSV",
       "xlsx": "Libro de Excel",
       "json": "Datos JSON",
       "pdf": "Reporte PDF"
     },
     "enrichment": {
-      "title": "Que Incluir",
+      "title": "Qué Incluir",
       "includeMatched": "Incluir filas que coincidieron",
-      "includeMetadata": "Incluir detalles de la comparacion (fechas, ajustes)",
+      "includeMetadata": "Incluir detalles de la comparación (fechas, ajustes)",
       "includeSummary": "Incluir un resumen al inicio",
       "includeNotes": "Incluir las notas que agregaste",
       "sideBySide": "Mostrar valores de origen y destino lado a lado"
     },
-    "generate": "Crear Exportacion",
+    "generate": "Crear Exportación",
     "generating": "Preparando tu archivo…",
     "download": "Descargar",
-    "downloadReady": "Tu archivo esta listo para descargar."
+    "downloadReady": "Tu archivo está listo para descargar."
   },
   "connections": {
     "title": "Conexiones a Bases de Datos",
-    "empty": "Aun no hay conexiones. Agrega una para traer datos directamente desde una base de datos.",
-    "new": "Agregar Conexion",
-    "edit": "Editar Conexion",
+    "empty": "Aún no hay conexiones. Agrega una para traer datos directamente desde una base de datos.",
+    "new": "Agregar Conexión",
+    "edit": "Editar Conexión",
     "form": {
-      "name": "Nombre de la Conexion",
-      "namePlaceholder": "ej. BD de Regalias Produccion",
+      "name": "Nombre de la Conexión",
+      "namePlaceholder": "ej. BD de Regalías Producción",
       "databaseType": "Tipo de Base de Datos",
       "types": {
         "postgresql": "PostgreSQL",
         "mysql": "MySQL",
         "sqlite": "SQLite"
       },
-      "host": "Direccion del Servidor",
+      "host": "Dirección del Servidor",
       "hostPlaceholder": "ej. db.ejemplo.com",
       "port": "Puerto",
       "portPlaceholder": "ej. 5432",
@@ -337,16 +337,16 @@
       "databaseNamePlaceholder": "ej. regalias_prod",
       "username": "Usuario",
       "usernamePlaceholder": "Tu usuario de base de datos",
-      "password": "Contrasena",
-      "passwordPlaceholder": "Tu contrasena de base de datos",
-      "sslEnabled": "Usar conexion segura (SSL)",
-      "filePath": "Ubicacion del Archivo",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña de base de datos",
+      "sslEnabled": "Usar conexión segura (SSL)",
+      "filePath": "Ubicación del Archivo",
       "filePathPlaceholder": "Ruta a tu archivo SQLite"
     },
-    "testConnection": "Probar Conexion",
+    "testConnection": "Probar Conexión",
     "testing": "Probando…",
-    "testSuccess": "Conexion exitosa!",
-    "testFailed": "No se pudo conectar — revisa tus datos e intentalo de nuevo",
+    "testSuccess": "¡Conexión exitosa!",
+    "testFailed": "No se pudo conectar — revisa tus datos e inténtalo de nuevo",
     "queryBuilder": {
       "title": "Ejecutar una Consulta",
       "query": "Consulta SQL",
@@ -371,16 +371,16 @@
     "next": "Continuar",
     "finish": "Finalizar",
     "loading": "Cargando…",
-    "error": "Algo salio mal — por favor intentalo de nuevo",
-    "success": "Listo!",
+    "error": "Algo salió mal — por favor inténtalo de nuevo",
+    "success": "¡Listo!",
     "retry": "Intentar de Nuevo",
     "search": "Buscar…",
-    "noResults": "No encontramos nada — prueba con otra busqueda",
+    "noResults": "No encontramos nada — prueba con otra búsqueda",
     "selected": "{count, plural, one {# seleccionado} other {# seleccionados}}",
     "requiredField": "Este campo es obligatorio",
     "viewAll": "Ver Todo",
     "actions": "Acciones",
     "createdAt": "Creado",
-    "updatedAt": "Ultima Actualizacion"
+    "updatedAt": "Última Actualización"
   }
 }
